@@ -10,11 +10,11 @@ class HomeController extends Controller
 {
     public function index(Request $request)
     {
-        $category = $request->input('category');
+        $activeCategory = $request->input('category');
 
-        if ($category) {
+        if ($activeCategory) {
             $products = Product::where('is_active', true)
-                ->where('category', $category)
+                ->where('category', $activeCategory)
                 ->get();
         } else {
             $topProductIds = Transaction::selectRaw('product_id, SUM(qty) as total_rented')
@@ -45,6 +45,6 @@ class HomeController extends Controller
             ['name' => 'Konsol Game', 'icon' => 'icons/iconps5.png'],
         ];
 
-        return view('home.index', compact('products', 'categories', 'category'));
+        return view('home.index', compact('products', 'categories', 'activeCategory'));
     }
 }
