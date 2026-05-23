@@ -64,10 +64,12 @@
                                     <i class="fas fa-user-circle"></i>
                                     <span>Profil Saya</span>
                                 </a>
+                                @if(!Auth::user()->isAdmin())
                                 <a href="{{ route('rentals.index') }}" class="dropdown-item">
                                     <i class="fas fa-shopping-bag"></i>
                                     <span>Pesanan Saya</span>
                                 </a>
+                                @endif
                                 @if(Auth::user()->isAdmin())
                                     <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
                                         <i class="fas fa-user-shield"></i>
@@ -135,10 +137,12 @@
                                         <i class="fas fa-user-circle"></i>
                                         <span>Profil Saya</span>
                                     </a>
+                                    @if(!Auth::user()->isAdmin())
                                     <a href="{{ route('rentals.index') }}" class="dropdown-item">
                                         <i class="fas fa-shopping-bag"></i>
                                         <span>Pesanan Saya</span>
                                     </a>
+                                    @endif
                                     @if(Auth::user()->isAdmin())
                                         <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
                                             <i class="fas fa-user-shield"></i>

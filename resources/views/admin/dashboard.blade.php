@@ -230,5 +230,4 @@
     });
 </script>
 @endpush
-@endsection
 
