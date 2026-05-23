@@ -115,23 +115,7 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const chartData = {
-            hari: {
-                labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
-                earnings: [150000, 300000, 250000, 600000, 450000, 900000, 1200000],
-                rentals: [1, 2, 1, 3, 2, 4, 5]
-            },
-            minggu: {
-                labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
-                earnings: [2500000, 3100000, 2800000, 4200000],
-                rentals: [10, 12, 11, 16]
-            },
-            bulan: {
-                labels: ['Desember', 'Januari', 'Februari', 'Maret', 'April', 'Mei'],
-                earnings: [12000000, 15000000, 14200000, 18500000, 22000000, 24500000],
-                rentals: [48, 60, 56, 74, 88, 98]
-            }
-        };
+        const chartData = @json($chartData);
 
         const options = {
             series: [

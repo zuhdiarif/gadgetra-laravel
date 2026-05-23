@@ -22,10 +22,10 @@
                     <img src="{{ asset('assets/Gadgetra Logo.png') }}" alt="Gadgetra Logo">
                 </a>
                 <div class="nav-links">
-                    <a href="#katalog">Smartphone</a>
-                    <a href="#katalog">Laptop</a>
-                    <a href="#katalog">Kamera</a>
-                    <a href="#katalog">Konsol Game</a>
+                    <a href="{{ route('home', ['category' => 'Smartphone']) }}#katalog">Smartphone</a>
+                    <a href="{{ route('home', ['category' => 'Laptop']) }}#katalog">Laptop</a>
+                    <a href="{{ route('home', ['category' => 'Kamera']) }}#katalog">Kamera</a>
+                    <a href="{{ route('home', ['category' => 'Konsol Game']) }}#katalog">Konsol Game</a>
                 </div>
                 <div class="search-bar">
                     <i class="fas fa-search" style="color: #ccc;"></i>

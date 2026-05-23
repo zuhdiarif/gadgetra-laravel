@@ -32,8 +32,8 @@ class AdminController extends Controller
                 'product_slug' => 'sony-alpha-iv',
                 'product_image' => 'Sony Alpha A7 IV Camera.png',
                 'qty' => 2,
-                'start_date' => '2026-11-22',
-                'end_date' => '2026-11-23',
+                'start_date' => date('Y-m-d', strtotime('tuesday this week')),
+                'end_date' => date('Y-m-d', strtotime('wednesday this week')),
                 'total_price' => 600000,
                 'status' => 'Sedang Disewa',
                 'remaining_time' => '30 : 42 : 12'
@@ -48,8 +48,8 @@ class AdminController extends Controller
                 'product_slug' => 'macbook-pro-m3',
                 'product_image' => 'MacBook Pro M3 Space Black.png',
                 'qty' => 1,
-                'start_date' => '2026-11-24',
-                'end_date' => '2026-11-26',
+                'start_date' => date('Y-m-d', strtotime('thursday this week')),
+                'end_date' => date('Y-m-d', strtotime('saturday this week')),
                 'total_price' => 500000,
                 'status' => 'Belum dibayar',
                 'remaining_time' => '48 : 00 : 00'
@@ -64,8 +64,8 @@ class AdminController extends Controller
                 'product_slug' => 'iphone-15-pro-max',
                 'product_image' => 'iPhone 15 Pro Max Natural Titanium.png',
                 'qty' => 1,
-                'start_date' => '2026-11-20',
-                'end_date' => '2026-11-21',
+                'start_date' => date('Y-m-d', strtotime('friday this week')),
+                'end_date' => date('Y-m-d', strtotime('saturday this week')),
                 'total_price' => 150000,
                 'status' => 'Selesai',
                 'remaining_time' => '00 : 00 : 00'
@@ -80,9 +80,185 @@ class AdminController extends Controller
                 'product_slug' => 'playstation-5-slim',
                 'product_image' => 'PlayStation 5 Console.png',
                 'qty' => 1,
-                'start_date' => '2026-11-18',
-                'end_date' => '2026-11-20',
+                'start_date' => date('Y-m-d', strtotime('sunday this week')),
+                'end_date' => date('Y-m-d', strtotime('monday next week')),
                 'total_price' => 170000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000001',
+                'customer_name' => 'Budi Hartono',
+                'customer_email' => 'budih@gmail.com',
+                'customer_phone' => '0812-1111-2222',
+                'customer_address' => 'Jakarta Pusat, DKI Jakarta',
+                'product_name' => 'Sony Alpha IV',
+                'product_slug' => 'sony-alpha-iv',
+                'product_image' => 'Sony Alpha A7 IV Camera.png',
+                'qty' => 1,
+                'start_date' => date('Y-m-d', strtotime('monday this week')),
+                'end_date' => date('Y-m-d', strtotime('tuesday this week')),
+                'total_price' => 300000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000002',
+                'customer_name' => 'Ahmad Yani',
+                'customer_email' => 'ahmadyani@gmail.com',
+                'customer_phone' => '0812-3333-4444',
+                'customer_address' => 'Bandung, Jawa Barat',
+                'product_name' => 'MacBook Pro M3',
+                'product_slug' => 'macbook-pro-m3',
+                'product_image' => 'MacBook Pro M3 Space Black.png',
+                'qty' => 1,
+                'start_date' => date('Y-m-d', strtotime('wednesday this week')),
+                'end_date' => date('Y-m-d', strtotime('friday this week')),
+                'total_price' => 500000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000003',
+                'customer_name' => 'Susi Susanti',
+                'customer_email' => 'susis@gmail.com',
+                'customer_phone' => '0812-5555-6666',
+                'customer_address' => 'Semarang, Jawa Tengah',
+                'product_name' => 'PlayStation 5 Slim',
+                'product_slug' => 'playstation-5-slim',
+                'product_image' => 'PlayStation 5 Console.png',
+                'qty' => 1,
+                'start_date' => date('Y-m-d', strtotime('saturday this week')),
+                'end_date' => date('Y-m-d', strtotime('sunday this week')),
+                'total_price' => 85000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000004',
+                'customer_name' => 'Joko Widodo',
+                'customer_email' => 'jokowi@gmail.com',
+                'customer_phone' => '0812-7777-8888',
+                'customer_address' => 'Solo, Jawa Tengah',
+                'product_name' => 'iPhone 15 Pro Max',
+                'product_slug' => 'iphone-15-pro-max',
+                'product_image' => 'iPhone 15 Pro Max Natural Titanium.png',
+                'qty' => 3,
+                'start_date' => date('Y-m-d', strtotime('monday last week')),
+                'end_date' => date('Y-m-d', strtotime('thursday last week')),
+                'total_price' => 1350000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000005',
+                'customer_name' => 'Megawati',
+                'customer_email' => 'megawati@gmail.com',
+                'customer_phone' => '0812-9999-0000',
+                'customer_address' => 'Jakarta Selatan, DKI Jakarta',
+                'product_name' => 'MacBook Pro M3',
+                'product_slug' => 'macbook-pro-m3',
+                'product_image' => 'MacBook Pro M3 Space Black.png',
+                'qty' => 2,
+                'start_date' => date('Y-m-d', strtotime('tuesday 2 weeks ago')),
+                'end_date' => date('Y-m-d', strtotime('friday 2 weeks ago')),
+                'total_price' => 1500000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000006',
+                'customer_name' => 'Prabowo Subianto',
+                'customer_email' => 'prabowo@gmail.com',
+                'customer_phone' => '0813-1111-2222',
+                'customer_address' => 'Hambalang, Jawa Barat',
+                'product_name' => 'PlayStation 5 Slim',
+                'product_slug' => 'playstation-5-slim',
+                'product_image' => 'PlayStation 5 Console.png',
+                'qty' => 4,
+                'start_date' => date('Y-m-d', strtotime('thursday 3 weeks ago')),
+                'end_date' => date('Y-m-d', strtotime('sunday 3 weeks ago')),
+                'total_price' => 1360000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000007',
+                'customer_name' => 'Gibran Rakabuming',
+                'customer_email' => 'gibran@gmail.com',
+                'customer_phone' => '0813-3333-4444',
+                'customer_address' => 'Surakarta, Jawa Tengah',
+                'product_name' => 'Sony Alpha IV',
+                'product_slug' => 'sony-alpha-iv',
+                'product_image' => 'Sony Alpha A7 IV Camera.png',
+                'qty' => 4,
+                'start_date' => date('Y-m-d', strtotime('-1 month')),
+                'end_date' => date('Y-m-d', strtotime('-1 month + 2 days')),
+                'total_price' => 2400000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000008',
+                'customer_name' => 'Anies Baswedan',
+                'customer_email' => 'anies@gmail.com',
+                'customer_phone' => '0813-5555-6666',
+                'customer_address' => 'Jakarta Timur, DKI Jakarta',
+                'product_name' => 'Sony Alpha IV',
+                'product_slug' => 'sony-alpha-iv',
+                'product_image' => 'Sony Alpha A7 IV Camera.png',
+                'qty' => 3,
+                'start_date' => date('Y-m-d', strtotime('-2 months')),
+                'end_date' => date('Y-m-d', strtotime('-2 months + 3 days')),
+                'total_price' => 2700000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000009',
+                'customer_name' => 'Ganjar Pranowo',
+                'customer_email' => 'ganjar@gmail.com',
+                'customer_phone' => '0813-7777-8888',
+                'customer_address' => 'Semarang, Jawa Tengah',
+                'product_name' => 'MacBook Pro M3',
+                'product_slug' => 'macbook-pro-m3',
+                'product_image' => 'MacBook Pro M3 Space Black.png',
+                'qty' => 6,
+                'start_date' => date('Y-m-d', strtotime('-3 months')),
+                'end_date' => date('Y-m-d', strtotime('-3 months + 4 days')),
+                'total_price' => 6000000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000010',
+                'customer_name' => 'Mahfud MD',
+                'customer_email' => 'mahfud@gmail.com',
+                'customer_phone' => '0813-9999-0000',
+                'customer_address' => 'Yogyakarta, DIY',
+                'product_name' => 'iPhone 15 Pro Max',
+                'product_slug' => 'iphone-15-pro-max',
+                'product_image' => 'iPhone 15 Pro Max Natural Titanium.png',
+                'qty' => 5,
+                'start_date' => date('Y-m-d', strtotime('-4 months')),
+                'end_date' => date('Y-m-d', strtotime('-4 months + 3 days')),
+                'total_price' => 2250000,
+                'status' => 'Selesai',
+                'remaining_time' => '00 : 00 : 00'
+            ],
+            [
+                'code' => 'TX1000011',
+                'customer_name' => 'Muhaimin Iskandar',
+                'customer_email' => 'cakimin@gmail.com',
+                'customer_phone' => '0814-1111-2222',
+                'customer_address' => 'Sidoarjo, Jawa Timur',
+                'product_name' => 'PlayStation 5 Slim',
+                'product_slug' => 'playstation-5-slim',
+                'product_image' => 'PlayStation 5 Console.png',
+                'qty' => 8,
+                'start_date' => date('Y-m-d', strtotime('-5 months')),
+                'end_date' => date('Y-m-d', strtotime('-5 months + 4 days')),
+                'total_price' => 2720000,
                 'status' => 'Selesai',
                 'remaining_time' => '00 : 00 : 00'
             ]
@@ -109,13 +285,99 @@ class AdminController extends Controller
         $totalEarnings = $transactions->where('status', 'Selesai')->sum('total_price') + $transactions->where('status', 'Sedang Disewa')->sum('total_price');
         $projectedEarnings = $transactions->sum('total_price');
 
+        $startOfWeek = date('Y-m-d', strtotime('monday this week'));
+        $endOfWeek = date('Y-m-d', strtotime('sunday this week'));
+
+        $dailyEarnings = [0, 0, 0, 0, 0, 0, 0];
+        $dailyRentals = [0, 0, 0, 0, 0, 0, 0];
+
+        foreach ($transactions as $t) {
+            $tDate = date('Y-m-d', strtotime($t['start_date']));
+            if ($tDate >= $startOfWeek && $tDate <= $endOfWeek) {
+                $dayOfWeek = (int)date('N', strtotime($t['start_date']));
+                $dailyEarnings[$dayOfWeek - 1] += $t['total_price'];
+                $dailyRentals[$dayOfWeek - 1] += $t['qty'];
+            }
+        }
+
+        $currentMonthStart = date('Y-m-01');
+        $currentMonthEnd = date('Y-m-t');
+
+        $weeklyEarnings = [0, 0, 0, 0];
+        $weeklyRentals = [0, 0, 0, 0];
+
+        foreach ($transactions as $t) {
+            $tDate = date('Y-m-d', strtotime($t['start_date']));
+            if ($tDate >= $currentMonthStart && $tDate <= $currentMonthEnd) {
+                $dayOfMonth = (int)date('j', strtotime($t['start_date']));
+                if ($dayOfMonth <= 7) {
+                    $weekIdx = 0;
+                } elseif ($dayOfMonth <= 14) {
+                    $weekIdx = 1;
+                } elseif ($dayOfMonth <= 21) {
+                    $weekIdx = 2;
+                } else {
+                    $weekIdx = 3;
+                }
+                $weeklyEarnings[$weekIdx] += $t['total_price'];
+                $weeklyRentals[$weekIdx] += $t['qty'];
+            }
+        }
+
+        $monthsList = [];
+        $monthKeys = [];
+        $monthNamesIndonesian = [
+            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret', '04' => 'April',
+            '05' => 'Mei', '06' => 'Juni', '07' => 'Juli', '08' => 'Agustus',
+            '09' => 'September', '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        ];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $time = strtotime("-{$i} months");
+            $monthKey = date('Y-m', $time);
+            $monthNum = date('m', $time);
+            $monthsList[] = $monthNamesIndonesian[$monthNum];
+            $monthKeys[] = $monthKey;
+        }
+
+        $monthlyEarnings = array_fill(0, 6, 0);
+        $monthlyRentals = array_fill(0, 6, 0);
+
+        foreach ($transactions as $t) {
+            $tMonthKey = date('Y-m', strtotime($t['start_date']));
+            $index = array_search($tMonthKey, $monthKeys);
+            if ($index !== false) {
+                $monthlyEarnings[$index] += $t['total_price'];
+                $monthlyRentals[$index] += $t['qty'];
+            }
+        }
+
+        $chartData = [
+            'hari' => [
+                'labels' => ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                'earnings' => $dailyEarnings,
+                'rentals' => $dailyRentals,
+            ],
+            'minggu' => [
+                'labels' => ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+                'earnings' => $weeklyEarnings,
+                'rentals' => $weeklyRentals,
+            ],
+            'bulan' => [
+                'labels' => $monthsList,
+                'earnings' => $monthlyEarnings,
+                'rentals' => $monthlyRentals,
+            ]
+        ];
+
         return view('admin.dashboard', compact(
             'totalProducts',
             'totalRented',
             'activeCustomers',
             'availableStock',
             'totalEarnings',
-            'projectedEarnings'
+            'projectedEarnings',
+            'chartData'
         ));
     }
 

@@ -72,10 +72,10 @@
         </div>
         <div class="category-grid">
             @foreach ($categories as $category)
-                <div class="category-card">
+                <a href="{{ route('home', ['category' => $category['name']]) }}#katalog" class="category-card" style="display: block; text-decoration: none; color: inherit;">
                     <img src="{{ asset('assets/' . $category['icon']) }}" alt="{{ $category['name'] }}">
                     <p>{{ $category['name'] }}</p>
-                </div>
+                </a>
             @endforeach
         </div>
     </section>
