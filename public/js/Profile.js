@@ -5,7 +5,11 @@ function showToast(message) {
         toast.className = 'success-toast';
         document.body.appendChild(toast);
     }
-    toast.innerHTML = '<i class="fas fa-check-circle"></i> ' + message;
+    var icon = document.createElement('i');
+    icon.className = 'fas fa-check-circle';
+    toast.textContent = '';
+    toast.appendChild(icon);
+    toast.appendChild(document.createTextNode(' ' + message));
     toast.classList.add('show');
     setTimeout(function() { toast.classList.remove('show'); }, 3500);
 }

@@ -1,16 +1,27 @@
+'use strict';
+
 document.addEventListener('DOMContentLoaded', function () {
-    const totalFormatted = localStorage.getItem('totalTagihanFormatted') || 'RpXXX.000';
+    function sanitizeText(str) {
+        if (typeof str !== 'string') return '';
+        return str.replace(/[<>"'&]/g, function (c) {
+            return {'<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','&':'&amp;'}[c];
+        });
+    }
+
+    const totalFormatted = sanitizeText(localStorage.getItem('totalTagihanFormatted') || 'Rp0');
     const totalTagihanDisplay = document.getElementById('totalTagihanDisplay');
     if (totalTagihanDisplay) {
         totalTagihanDisplay.textContent = totalFormatted;
     }
 
-    const productName = localStorage.getItem('productName') || 'Sony Alpha IV';
-    const productSlug = localStorage.getItem('productSlug') || 'sony-alpha-iv';
+    const productName = sanitizeText(localStorage.getItem('productName') || 'Gadget');
+    const productSlug = (localStorage.getItem('productSlug') || '').replace(/[^a-z0-9-]/g, '');
     const breadcrumbProductLink = document.getElementById('breadcrumbProductLink');
     if (breadcrumbProductLink) {
         breadcrumbProductLink.textContent = productName;
-        breadcrumbProductLink.href = '/product/' + productSlug;
+        if (/^[a-z0-9-]+$/.test(productSlug)) {
+            breadcrumbProductLink.href = '/product/' + productSlug;
+        }
     }
 
     const VA_NUMBER = '80732XXXXXXXX';
@@ -81,8 +92,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const copyTotalBtn = document.getElementById('copyTotalBtn');
     if (copyTotalBtn) {
         copyTotalBtn.addEventListener('click', function () {
-            const rawTotal = localStorage.getItem('totalTagihan') || '0';
-            copyToClipboard(rawTotal, this);
+            const rawTotal = parseInt(localStorage.getItem('totalTagihan') || '0', 10);
+            copyToClipboard(String(rawTotal), this);
         });
     }
 
@@ -97,32 +108,37 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (openBookingCodeBtn) {
         openBookingCodeBtn.addEventListener('click', function () {
-            const rentalStart = localStorage.getItem('rentalStartDate') || '22/11/26';
-            const rentalEnd = localStorage.getItem('rentalEndDate') || '23/11/26';
-            const rentalQty = parseInt(localStorage.getItem('rentalQty')) || 1;
-            const totalTagihan = parseInt(localStorage.getItem('totalTagihan')) || 0;
-            const productName = localStorage.getItem('productName') || 'Sony Alpha IV';
-            const productSlug = localStorage.getItem('productSlug') || 'sony-alpha-iv';
-            const productImage = localStorage.getItem('productImage') || 'Sony Alpha A7 IV Camera.png';
+            const rentalStart = sanitizeText(localStorage.getItem('rentalStartDate') || '');
+            const rentalEnd = sanitizeText(localStorage.getItem('rentalEndDate') || '');
+            const rentalQty = Math.max(1, Math.min(10, parseInt(localStorage.getItem('rentalQty') || '1', 10)));
+            const totalTagihan = Math.max(0, parseInt(localStorage.getItem('totalTagihan') || '0', 10));
+            const slug = (localStorage.getItem('productSlug') || '').replace(/[^a-z0-9-]/g, '');
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) return;
 
             $.ajax({
                 url: '/booking/store',
                 type: 'POST',
                 data: {
-                    _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    _token: csrfToken.getAttribute('content'),
                     start_date: rentalStart,
                     end_date: rentalEnd,
                     qty: rentalQty,
                     total_price: totalTagihan,
+                    product_slug: slug,
                     product_name: productName,
-                    product_slug: productSlug,
-                    product_image: productImage.split('/').pop()
+                    product_image: sanitizeText(localStorage.getItem('productImage') || '').split('/').pop()
                 },
                 success: function () {
                     window.location.href = '/booking/code';
                 },
-                error: function () {
-                    window.location.href = '/booking/code';
+                error: function (xhr) {
+                    if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
+                        alert('Booking gagal: ' + xhr.responseJSON.message);
+                    } else {
+                        window.location.href = '/booking/code';
+                    }
                 }
             });
         });

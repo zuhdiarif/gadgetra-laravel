@@ -10,16 +10,6 @@ use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(function ($request, $next) {
-            if (!$request->user() || !$request->user()->isAdmin()) {
-                abort(403, 'Unauthorized.');
-            }
-            return $next($request);
-        });
-    }
-
     private function getTransactions()
     {
         return Transaction::all();
@@ -136,21 +126,24 @@ class AdminController extends Controller
     public function transactions(Request $request)
     {
         $transactions = $this->getTransactions();
-        
+
         $search = $request->input('q');
         if (!empty($search)) {
+            $search = strip_tags(trim($search));
             $transactions = $transactions->filter(function ($item) use ($search) {
-                return Str::contains(strtolower($item['customer_name']), strtolower($search)) || 
-                       Str::contains(strtolower($item['product_name']), strtolower($search)) || 
+                return Str::contains(strtolower($item['customer_name']), strtolower($search)) ||
+                       Str::contains(strtolower($item['product_name']), strtolower($search)) ||
                        Str::contains(strtolower($item['code']), strtolower($search));
             });
         }
 
+        $allowedStatuses = ['Semua', 'Sedang Disewa', 'Belum dibayar', 'Selesai'];
         $status = $request->input('status');
-        if (!empty($status) && $status !== 'Semua') {
+        if (!empty($status) && in_array($status, $allowedStatuses) && $status !== 'Semua') {
             $transactions = $transactions->where('status', $status);
         }
 
+        $allowedFilters = ['baru', 'lama'];
         $filterType = $request->input('filter_type');
         if ($filterType === 'baru') {
             $transactions = $transactions->sortByDesc('start_date');
@@ -175,12 +168,14 @@ class AdminController extends Controller
 
     public function products(Request $request)
     {
-        $products = Product::all();
         $search = $request->input('q');
         if (!empty($search)) {
+            $search = strip_tags(trim($search));
             $products = Product::where('name', 'like', '%' . $search . '%')
                 ->orWhere('category', 'like', '%' . $search . '%')
                 ->get();
+        } else {
+            $products = Product::all();
         }
 
         return view('admin.products.index', compact('products', 'search'));
@@ -193,31 +188,41 @@ class AdminController extends Controller
 
     public function storeProduct(Request $request)
     {
+        $allowedCategories = ['Smartphone', 'Laptop', 'Kamera', 'Konsol Game'];
+        $allowedConditions = ['Sempurna', 'Baik', 'Cukup'];
+
         $request->validate([
-            'name' => 'required|min:3|max:255',
-            'category' => 'required',
-            'price_per_day' => 'required|numeric|min:0',
-            'stock' => 'required|integer|min:0',
-            'condition_fisik' => 'required',
-            'condition_fungsi' => 'required',
-            'condition_kelengkapan' => 'required',
-            'spec_processor' => 'nullable',
-            'spec_ram' => 'nullable',
-            'spec_storage' => 'nullable',
-            'spec_display' => 'nullable',
-            'spec_battery' => 'nullable',
-            'description' => 'required',
-            'photo' => 'required|image|mimes:jpg,jpeg,png|max:5120',
+            'name'                  => 'required|string|min:3|max:255',
+            'category'              => 'required|in:' . implode(',', $allowedCategories),
+            'price_per_day'         => 'required|numeric|min:1000|max:10000000',
+            'stock'                 => 'required|integer|min:0|max:1000',
+            'condition_fisik'       => 'required|in:' . implode(',', $allowedConditions),
+            'condition_fungsi'      => 'required|in:' . implode(',', $allowedConditions),
+            'condition_kelengkapan' => 'required|in:' . implode(',', $allowedConditions),
+            'spec_processor'        => 'nullable|string|max:100',
+            'spec_ram'              => 'nullable|string|max:50',
+            'spec_storage'          => 'nullable|string|max:50',
+            'spec_display'          => 'nullable|string|max:100',
+            'spec_battery'          => 'nullable|string|max:100',
+            'description'           => 'required|string|max:2000',
+            'photo'                 => 'required|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
-        Product::addProduct($request->all(), $request->file('photo'));
+        $data = $request->only([
+            'name', 'category', 'price_per_day', 'stock',
+            'condition_fisik', 'condition_fungsi', 'condition_kelengkapan',
+            'spec_processor', 'spec_ram', 'spec_storage', 'spec_display', 'spec_battery',
+            'description',
+        ]);
+
+        Product::addProduct($data, $request->file('photo'));
 
         return redirect()->route('admin.products')->with('success', 'Product created successfully.');
     }
 
     public function deleteProduct($id)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail((int) $id);
         $product->deleteProduct();
 
         return redirect()->route('admin.products')->with('success', 'Product deleted successfully.');
@@ -231,6 +236,10 @@ class AdminController extends Controller
 
     public function markReturned($code)
     {
+        if (!preg_match('/^RNT[A-Z0-9]+$/', $code)) {
+            abort(400);
+        }
+
         Transaction::markAsReturned($code);
         return redirect()->back()->with('success', 'Item marked as returned.');
     }

@@ -51,7 +51,10 @@ class Product extends Model
 
     public static function addProduct(array $data, $photoFile): self
     {
-        $filename = 'prod_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $photoFile->getClientOriginalExtension();
+        $mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'jpg'];
+        $mime = $photoFile->getMimeType();
+        $ext = $mimeToExt[$mime] ?? 'jpg';
+        $filename = 'prod_' . time() . '_' . bin2hex(random_bytes(8)) . '.' . $ext;
         $photoFile->move(public_path('assets/products'), $filename);
 
         $specifications = [];

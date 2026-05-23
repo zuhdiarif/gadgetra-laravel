@@ -88,9 +88,10 @@ class User extends Authenticatable
             }
         }
 
-        $filename = 'profile_' . substr(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 0, 8)
-            . '_' . time() . '_' . bin2hex(random_bytes(4))
-            . '.' . $file->getClientOriginalExtension();
+        $mimeToExt = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'jpg'];
+        $mime = $file->getMimeType();
+        $ext = $mimeToExt[$mime] ?? 'jpg';
+        $filename = 'profile_' . substr(md5(uniqid('', true)), 0, 12) . '_' . time() . '.' . $ext;
 
         $file->move(public_path('uploads'), $filename);
 
