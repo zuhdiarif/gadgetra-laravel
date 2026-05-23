@@ -52,13 +52,15 @@ class PaymentController extends Controller
             ->where('is_active', true)
             ->firstOrFail();
 
-        $expectedPrice = $product->price_per_day * $validated['qty'];
-        $days = (int) ceil(
-            (strtotime($validated['end_date']) - strtotime($validated['start_date'])) / 86400
-        );
-        $expectedPrice = $product->price_per_day * $validated['qty'] * max($days, 1);
+        $serviceFee = 2000;
+        $startTs = strtotime($validated['start_date']);
+        $endTs   = strtotime($validated['end_date']);
+        $days    = (int) floor(($endTs - $startTs) / 86400) + 1;
+        $days    = max($days, 1);
 
-        if (abs($validated['total_price'] - $expectedPrice) > 1000) {
+        $expectedPrice = ($product->price_per_day * $validated['qty'] * $days) + $serviceFee;
+
+        if (abs($validated['total_price'] - $expectedPrice) > 5000) {
             return response()->json([
                 'success' => false,
                 'message' => 'Total harga tidak sesuai. Silakan ulangi proses booking.'
@@ -68,7 +70,7 @@ class PaymentController extends Controller
         $safeData = [
             'product_slug'  => $product->slug,
             'product_name'  => $product->name,
-            'product_image' => basename($product->photo),
+            'product_image' => basename($product->image),
             'qty'           => $validated['qty'],
             'start_date'    => $validated['start_date'],
             'end_date'      => $validated['end_date'],
