@@ -81,7 +81,7 @@
     </section>
 
     <section id="katalog" class="products container">
-        <h2>Katalog Produk Terbaru</h2>
+        <h2>{{ $category ? 'Produk ' . $category : '5 Produk Terlaris' }}</h2>
         <div class="product-grid">
             @foreach ($products as $product)
                 <a href="{{ route('product.detail', $product->slug) }}" class="product-card product-card-link">
