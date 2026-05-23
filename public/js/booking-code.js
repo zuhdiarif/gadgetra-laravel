@@ -1,10 +1,13 @@
+'use strict';
+
 document.addEventListener('DOMContentLoaded', function () {
-    const rentalStart = localStorage.getItem('rentalStartDate') || '22/11/26';
-    const rentalEnd = localStorage.getItem('rentalEndDate') || '23/11/26';
+    const rentalStart = localStorage.getItem('rentalStartDateDisplay') || localStorage.getItem('rentalStartDate') || '';
+    const rentalEnd = localStorage.getItem('rentalEndDateDisplay') || localStorage.getItem('rentalEndDate') || '';
     const rentalQty = localStorage.getItem('rentalQty') || 'X';
-    const totalFormatted = localStorage.getItem('totalTagihanFormatted') || 'RpXXX.000';
-    const productName = localStorage.getItem('productName') || 'Sony Alpha IV';
-    const productImage = localStorage.getItem('productImage') || '/assets/products/Sony Alpha A7 IV Camera.png';
+    const totalFormatted = localStorage.getItem('totalTagihanFormatted') || 'Rp0';
+    const productName = localStorage.getItem('productName') || 'Gadget';
+    const productImage = localStorage.getItem('productImage') || '';
+    const bookingCode = localStorage.getItem('bookingCode') || '';
 
     const bcTanggalSewa = document.getElementById('bcTanggalSewa');
     if (bcTanggalSewa) {
@@ -27,8 +30,15 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     const bcProductImg = document.querySelector('.bc-product-img');
-    if (bcProductImg) {
-        bcProductImg.src = productImage;
+    if (bcProductImg && productImage) {
+        bcProductImg.src = productImage.startsWith('/')
+            ? productImage
+            : '/assets/products/' + productImage;
         bcProductImg.alt = productName;
+    }
+
+    const bcCodeEl = document.getElementById('bcBookingCode');
+    if (bcCodeEl && bookingCode) {
+        bcCodeEl.textContent = bookingCode;
     }
 });

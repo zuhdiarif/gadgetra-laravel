@@ -48,8 +48,13 @@
                                         <span style="font-size: 12px; color: #888; display: block; margin-top: 4px;">Kode Booking: <strong>{{ $rental['code'] }}</strong> | Jumlah: {{ $rental['qty'] }} buah</span>
                                     </div>
                                 </div>
-                                <div style="text-align: right;">
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 10px;">
                                     <strong style="color: #002D72; font-size: 16px;">Rp{{ number_format($rental['total_price'], 0, ',', '.') }}</strong>
+                                    <button
+                                        onclick="openBookingCode('{{ $rental['code'] }}','{{ $rental['product_name'] }}','{{ $rental['product_slug'] }}','{{ $rental['product_image'] }}','{{ $rental['qty'] }}','{{ $rental['total_price'] }}','{{ $rental['start_date'] }}','{{ $rental['end_date'] }}')"
+                                        style="background: #002D72; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <i class="fas fa-ticket-alt"></i> Lihat Booking Code
+                                    </button>
                                 </div>
                             </div>
                         @endforeach
@@ -89,4 +94,21 @@
             </div>
         </section>
     </div>
+
+    <script>
+    function openBookingCode(code, productName, productSlug, productImage, qty, totalPrice, startDate, endDate) {
+        localStorage.setItem('bookingCode', code);
+        localStorage.setItem('productName', productName);
+        localStorage.setItem('productSlug', productSlug);
+        localStorage.setItem('productImage', productImage);
+        localStorage.setItem('rentalQty', qty);
+        localStorage.setItem('totalTagihan', totalPrice);
+        localStorage.setItem('totalTagihanFormatted', 'Rp' + parseInt(totalPrice).toLocaleString('id-ID'));
+        localStorage.setItem('rentalStartDate', startDate);
+        localStorage.setItem('rentalEndDate', endDate);
+        localStorage.setItem('rentalStartDateDisplay', startDate);
+        localStorage.setItem('rentalEndDateDisplay', endDate);
+        window.location.href = '/booking/code';
+    }
+    </script>
 @endsection

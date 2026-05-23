@@ -110,6 +110,8 @@ document.addEventListener('DOMContentLoaded', function () {
         openBookingCodeBtn.addEventListener('click', function () {
             const rentalStart = sanitizeText(localStorage.getItem('rentalStartDate') || '');
             const rentalEnd = sanitizeText(localStorage.getItem('rentalEndDate') || '');
+            const rentalStartDisplay = sanitizeText(localStorage.getItem('rentalStartDateDisplay') || rentalStart);
+            const rentalEndDisplay = sanitizeText(localStorage.getItem('rentalEndDateDisplay') || rentalEnd);
             const rentalQty = Math.max(1, Math.min(10, parseInt(localStorage.getItem('rentalQty') || '1', 10)));
             const totalTagihan = Math.max(0, parseInt(localStorage.getItem('totalTagihan') || '0', 10));
             const slug = (localStorage.getItem('productSlug') || '').replace(/[^a-z0-9-]/g, '');
@@ -130,7 +132,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     product_name: productName,
                     product_image: sanitizeText(localStorage.getItem('productImage') || '').split('/').pop()
                 },
-                success: function () {
+                success: function (response) {
+                    if (response && response.code) {
+                        localStorage.setItem('bookingCode', response.code);
+                    }
                     window.location.href = '/booking/code';
                 },
                 error: function (xhr) {

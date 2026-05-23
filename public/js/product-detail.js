@@ -100,15 +100,15 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!rentalStartDate || (rentalStartDate && rentalEndDate)) {
             rentalStartDate = date;
             rentalEndDate = null;
-            startDateInput.value = formatDateString(date);
+            startDateInput.value = formatDateDisplay(date);
             endDateInput.value = '';
         } else if (rentalStartDate && !rentalEndDate) {
             if (date < rentalStartDate) {
                 rentalStartDate = date;
-                startDateInput.value = formatDateString(date);
+                startDateInput.value = formatDateDisplay(date);
             } else {
                 rentalEndDate = date;
-                endDateInput.value = formatDateString(date);
+                endDateInput.value = formatDateDisplay(date);
             }
         }
 
@@ -129,11 +129,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function formatDateString(date) {
-        let day = String(date.getDate()).padStart(2, '0');
-        let month = String(date.getMonth() + 1).padStart(2, '0');
-        let year = String(date.getFullYear()).substring(2);
-        return `${day}/${month}/${year}`;
+    function formatDateISO(date) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    function formatDateDisplay(date) {
+        const d = String(date.getDate()).padStart(2, '0');
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const y = String(date.getFullYear()).substring(2);
+        return `${d}/${m}/${y}`;
     }
 
     prevMonthBtn.addEventListener('click', () => {
@@ -244,8 +251,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const slug = addToCartBtn.getAttribute('data-slug') || 'sony-alpha-iv';
 
         localStorage.setItem('rentalQty', qty);
-        localStorage.setItem('rentalStartDate', startVal);
-        localStorage.setItem('rentalEndDate', endVal);
+        localStorage.setItem('rentalStartDate', formatDateISO(rentalStartDate));
+        localStorage.setItem('rentalEndDate', formatDateISO(rentalEndDate));
+        localStorage.setItem('rentalStartDateDisplay', formatDateDisplay(rentalStartDate));
+        localStorage.setItem('rentalEndDateDisplay', formatDateDisplay(rentalEndDate));
         localStorage.setItem('rentalDurationDays', durationDays);
         localStorage.setItem('productName', name);
         localStorage.setItem('productPrice', price);

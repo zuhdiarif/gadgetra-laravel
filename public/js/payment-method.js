@@ -12,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const rentalQty = parseInt(localStorage.getItem('rentalQty')) || 1;
     const rentalDays = parseInt(localStorage.getItem('rentalDurationDays')) || 3;
-    const rentalStart = localStorage.getItem('rentalStartDate') || '';
-    const rentalEnd = localStorage.getItem('rentalEndDate') || '';
+    const rentalStart = localStorage.getItem('rentalStartDateDisplay') || localStorage.getItem('rentalStartDate') || '';
+    const rentalEnd = localStorage.getItem('rentalEndDateDisplay') || localStorage.getItem('rentalEndDate') || '';
 
     const displayMasaSewa = document.getElementById('displayMasaSewa');
     const displayJumlah = document.getElementById('displayJumlah');
