@@ -139,11 +139,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     window.location.href = '/booking/code';
                 },
                 error: function (xhr) {
-                    if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.message) {
-                        alert('Booking gagal: ' + xhr.responseJSON.message);
-                    } else {
-                        window.location.href = '/booking/code';
+                    var msg = 'Booking gagal. Silakan coba lagi.';
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        msg = 'Booking gagal: ' + xhr.responseJSON.message;
+                    } else if (xhr.status === 500) {
+                        msg = 'Terjadi kesalahan server. Silakan coba lagi.';
+                    } else if (xhr.status === 404) {
+                        msg = 'Produk tidak ditemukan. Silakan kembali ke halaman produk.';
                     }
+                    alert(msg);
                 }
             });
         });

@@ -49,13 +49,13 @@ class Transaction extends Model
         $product = Product::where('slug', $data['product_slug'])->first();
 
         return self::create([
-            'code' => $code,
-            'user_id' => $user ? $user->ID : null,
-            'product_id' => $product ? $product->id : null,
-            'customer_name' => $user ? $user->Nama : 'User',
-            'customer_email' => $user ? $user->Email : 'guest@gadgetra.com',
-            'customer_phone' => $user ? $user->phone : '0812-3456-7890',
-            'customer_address' => $user ? $user->alamat : 'Malang, Jawa Timur',
+            'code'             => $code,
+            'user_id'          => $user ? $user->ID : null,
+            'product_id'       => $product ? $product->id : null,
+            'customer_name'    => ($user && !empty($user->Nama)) ? $user->Nama : 'Pelanggan',
+            'customer_email'   => ($user && !empty($user->Email)) ? $user->Email : 'guest@gadgetra.com',
+            'customer_phone'   => ($user && !empty($user->phone)) ? $user->phone : '-',
+            'customer_address' => ($user && !empty($user->alamat)) ? $user->alamat : 'Indonesia',
             'product_name' => $data['product_name'],
             'product_slug' => $data['product_slug'],
             'product_image' => $data['product_image'],
