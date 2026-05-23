@@ -210,37 +210,7 @@ class AdminController extends Controller
             'photo' => 'required|image|mimes:jpg,jpeg,png|max:5120',
         ]);
 
-        $file = $request->file('photo');
-        $filename = 'prod_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('assets/products'), $filename);
-
-        $specifications = [];
-        if ($request->spec_processor) $specifications['Processor'] = $request->spec_processor;
-        if ($request->spec_ram) $specifications['RAM'] = $request->spec_ram;
-        if ($request->spec_storage) $specifications['Penyimpanan'] = $request->spec_storage;
-        if ($request->spec_display) $specifications['Layar'] = $request->spec_display;
-        if ($request->spec_battery) $specifications['Baterai'] = $request->spec_battery;
-
-        $conditions = [
-            'Fisik' => $request->condition_fisik,
-            'Fungsi' => $request->condition_fungsi,
-            'Kelengkapan' => $request->condition_kelengkapan
-        ];
-
-        Product::create([
-            'name' => $request->name,
-            'slug' => Str::slug($request->name),
-            'description' => $request->description,
-            'category' => $request->category,
-            'price_per_day' => (int)$request->price_per_day,
-            'image' => $filename,
-            'badge' => null,
-            'rating' => 5.0,
-            'specifications' => $specifications,
-            'conditions' => $conditions,
-            'stock' => (int)$request->stock,
-            'is_active' => true,
-        ]);
+        Product::addProduct($request->all(), $request->file('photo'));
 
         return redirect()->route('admin.products')->with('success', 'Product created successfully.');
     }
@@ -248,13 +218,7 @@ class AdminController extends Controller
     public function deleteProduct($id)
     {
         $product = Product::findOrFail($id);
-        if ($product->image) {
-            $imagePath = public_path('assets/products/' . $product->image);
-            if (file_exists($imagePath)) {
-                unlink($imagePath);
-            }
-        }
-        $product->delete();
+        $product->deleteProduct();
 
         return redirect()->route('admin.products')->with('success', 'Product deleted successfully.');
     }
@@ -267,12 +231,7 @@ class AdminController extends Controller
 
     public function markReturned($code)
     {
-        $transaction = Transaction::where('code', $code)->firstOrFail();
-        $transaction->update([
-            'status' => 'Selesai',
-            'remaining_time' => '00 : 00 : 00'
-        ]);
-
+        Transaction::markAsReturned($code);
         return redirect()->back()->with('success', 'Item marked as returned.');
     }
 }

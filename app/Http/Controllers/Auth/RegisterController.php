@@ -62,10 +62,7 @@ class RegisterController extends Controller
             ]);
         }
 
-        User::create([
-            'Email' => $request->email,
-            'password' => Hash::make($password, ['rounds' => 12]),
-        ]);
+        User::addUser($request->email, $password);
 
         RateLimiter::clear($key);
 
@@ -75,3 +72,4 @@ class RegisterController extends Controller
         ]);
     }
 }
+

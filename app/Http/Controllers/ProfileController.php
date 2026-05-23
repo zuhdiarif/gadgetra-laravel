@@ -19,7 +19,6 @@ class ProfileController extends Controller
 
     public function update(Request $request)
     {
-        
         $user = Auth::user();
         if (!$user) {
             abort(403);
@@ -40,14 +39,7 @@ class ProfileController extends Controller
             'umur.max' => 'Umur tidak valid.',
         ]);
 
-        $user->update([
-            'Nama' => $request->nama,
-            'umur' => $request->umur ?: null,
-            'tempat_lahir' => $request->tempat_lahir ?: null,
-            'phone' => $request->phone ?: null,
-            'phone_keluarga' => $request->phone_keluarga ?: null,
-            'alamat' => $request->alamat ?: null,
-        ]);
+        $user->updateProfile($request->all());
 
         return redirect()->route('profile.show')->with('success', 'profile');
     }
@@ -63,29 +55,12 @@ class ProfileController extends Controller
             'photo.max' => 'Ukuran file melebihi batas 5MB.',
         ]);
 
-        
         $user = Auth::user();
         if (!$user) {
             abort(403);
         }
 
-        
-        if (!empty($user->avatar)) {
-            $oldPath = public_path('uploads/' . basename($user->avatar));
-            if (file_exists($oldPath)) {
-                unlink($oldPath);
-            }
-        }
-
-        
-        $file = $request->file('photo');
-        $filename = 'profile_' . substr(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME), 0, 8)
-            . '_' . time() . '_' . bin2hex(random_bytes(4))
-            . '.' . $file->getClientOriginalExtension();
-
-        $file->move(public_path('uploads'), $filename);
-
-        $user->update(['avatar' => 'uploads/' . $filename]);
+        $user->uploadAvatarFile($request->file('photo'));
 
         return redirect()->route('profile.show')->with('success', 'photo');
     }
