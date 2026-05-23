@@ -237,11 +237,28 @@ const Auth = (() => {
             credentials: 'same-origin'
         });
 
+        const json = await response.json().catch(() => null);
+
+        if (response.status >= 500) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        if (!response.ok && json) {
+            if (json.errors) {
+                const firstKey = Object.keys(json.errors)[0];
+                const msg = Array.isArray(json.errors[firstKey])
+                    ? json.errors[firstKey][0]
+                    : json.errors[firstKey];
+                return { success: false, message: msg, errors: json.errors };
+            }
+            return { success: false, message: json.message || 'Terjadi kesalahan.' };
+        }
+
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
         }
 
-        return response.json();
+        return json;
     }
 
     function sanitizeInput(str) {
