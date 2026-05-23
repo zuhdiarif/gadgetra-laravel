@@ -54,4 +54,9 @@ class User extends Authenticatable
         }
         return 'Jan 2024';
     }
+
+    public function isAdmin(): bool
+    {
+        return $this->Email === 'admin@gadgetra.com';
+    }
 }

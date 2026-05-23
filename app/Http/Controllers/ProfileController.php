@@ -107,4 +107,142 @@ class ProfileController extends Controller
             'avatar' => $user->avatar_url,
         ]);
     }
+
+    public function rentals()
+    {
+        $user = Auth::user();
+        if (!$user) {
+            abort(403);
+        }
+
+        if (!session()->has('admin_transactions')) {
+            $simulated = [
+                [
+                    'code' => 'TYZ10CH6U',
+                    'customer_name' => 'Budiono Siregar',
+                    'customer_email' => 'Budi01R@gmail.com',
+                    'customer_phone' => '0812-3456-7890',
+                    'customer_address' => 'Malang Kota, Jawa Timur',
+                    'product_name' => 'Sony Alpha IV',
+                    'product_slug' => 'sony-alpha-iv',
+                    'product_image' => 'Sony Alpha A7 IV Camera.png',
+                    'qty' => 2,
+                    'start_date' => '2026-11-22',
+                    'end_date' => '2026-11-23',
+                    'total_price' => 600000,
+                    'status' => 'Sedang Disewa',
+                    'remaining_time' => '30 : 42 : 12'
+                ],
+                [
+                    'code' => 'KJD93HJ2A',
+                    'customer_name' => 'Siti Aminah',
+                    'customer_email' => 'sitiaminah@gmail.com',
+                    'customer_phone' => '0821-9876-5432',
+                    'customer_address' => 'Surabaya, Jawa Timur',
+                    'product_name' => 'MacBook Pro M3',
+                    'product_slug' => 'macbook-pro-m3',
+                    'product_image' => 'MacBook Pro M3 Space Black.png',
+                    'qty' => 1,
+                    'start_date' => '2026-11-24',
+                    'end_date' => '2026-11-26',
+                    'total_price' => 500000,
+                    'status' => 'Belum dibayar',
+                    'remaining_time' => '48 : 00 : 00'
+                ],
+                [
+                    'code' => 'LQM48PL7B',
+                    'customer_name' => 'Rian Hidayat',
+                    'customer_email' => 'rianh@gmail.com',
+                    'customer_phone' => '0813-5555-8888',
+                    'customer_address' => 'Batu, Jawa Timur',
+                    'product_name' => 'iPhone 15 Pro Max',
+                    'product_slug' => 'iphone-15-pro-max',
+                    'product_image' => 'iPhone 15 Pro Max Natural Titanium.png',
+                    'qty' => 1,
+                    'start_date' => '2026-11-20',
+                    'end_date' => '2026-11-21',
+                    'total_price' => 150000,
+                    'status' => 'Selesai',
+                    'remaining_time' => '00 : 00 : 00'
+                ],
+                [
+                    'code' => 'XPW32NZ4C',
+                    'customer_name' => 'Dewi Lestari',
+                    'customer_email' => 'dewi.lestari@gmail.com',
+                    'customer_phone' => '0877-4433-2211',
+                    'customer_address' => 'Sidoarjo, Jawa Timur',
+                    'product_name' => 'PlayStation 5 Slim',
+                    'product_slug' => 'playstation-5-slim',
+                    'product_image' => 'PlayStation 5 Console.png',
+                    'qty' => 1,
+                    'start_date' => '2026-11-18',
+                    'end_date' => '2026-11-20',
+                    'total_price' => 170000,
+                    'status' => 'Selesai',
+                    'remaining_time' => '00 : 00 : 00'
+                ]
+            ];
+            session()->put('admin_transactions', $simulated);
+        }
+
+        $allTransactions = collect(session()->get('admin_transactions'));
+
+        $userTransactions = $allTransactions->filter(function ($t) use ($user) {
+            return strtolower($t['customer_email']) === strtolower($user->Email);
+        });
+
+        if ($userTransactions->isEmpty() && $user->Email !== 'admin@gadgetra.com') {
+            $codeActive = 'RNT' . strtoupper(substr(md5(time() . 'active'), 0, 6));
+            $codeDone = 'RNT' . strtoupper(substr(md5(time() . 'done'), 0, 6));
+
+            $injected = [
+                [
+                    'code' => $codeActive,
+                    'customer_name' => $user->Nama ?? 'User',
+                    'customer_email' => $user->Email,
+                    'customer_phone' => $user->phone ?? '0812-3456-7890',
+                    'customer_address' => $user->alamat ?? 'Malang, Jawa Timur',
+                    'product_name' => 'Sony Alpha IV',
+                    'product_slug' => 'sony-alpha-iv',
+                    'product_image' => 'Sony Alpha A7 IV Camera.png',
+                    'qty' => 1,
+                    'start_date' => date('Y-m-d', strtotime('-1 day')),
+                    'end_date' => date('Y-m-d', strtotime('+2 days')),
+                    'total_price' => 300000,
+                    'status' => 'Sedang Disewa',
+                    'remaining_time' => '48 : 00 : 00'
+                ],
+                [
+                    'code' => $codeDone,
+                    'customer_name' => $user->Nama ?? 'User',
+                    'customer_email' => $user->Email,
+                    'customer_phone' => $user->phone ?? '0812-3456-7890',
+                    'customer_address' => $user->alamat ?? 'Malang, Jawa Timur',
+                    'product_name' => 'MacBook Pro M3',
+                    'product_slug' => 'macbook-pro-m3',
+                    'product_image' => 'MacBook Pro M3 Space Black.png',
+                    'qty' => 1,
+                    'start_date' => date('Y-m-d', strtotime('-7 days')),
+                    'end_date' => date('Y-m-d', strtotime('-5 days')),
+                    'total_price' => 500000,
+                    'status' => 'Selesai',
+                    'remaining_time' => '00 : 00 : 00'
+                ]
+            ];
+
+            $allTransactions = $allTransactions->merge($injected);
+            session()->put('admin_transactions', $allTransactions->toArray());
+            $userTransactions = collect($injected);
+        }
+
+        $activeRentals = $userTransactions->filter(function ($t) {
+            return $t['status'] === 'Sedang Disewa' || $t['status'] === 'Belum dibayar';
+        });
+
+        $completedRentals = $userTransactions->filter(function ($t) {
+            return $t['status'] === 'Selesai';
+        });
+
+        return view('profile.rentals', compact('user', 'activeRentals', 'completedRentals'));
+    }
 }

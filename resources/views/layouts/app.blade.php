@@ -64,10 +64,16 @@
                                     <i class="fas fa-user-circle"></i>
                                     <span>Profil Saya</span>
                                 </a>
-                                <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
-                                    <i class="fas fa-user-shield"></i>
-                                    <span>Admin Panel</span>
+                                <a href="{{ route('rentals.index') }}" class="dropdown-item">
+                                    <i class="fas fa-shopping-bag"></i>
+                                    <span>Pesanan Saya</span>
                                 </a>
+                                @if(Auth::user()->isAdmin())
+                                    <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
+                                        <i class="fas fa-user-shield"></i>
+                                        <span>Admin Panel</span>
+                                    </a>
+                                @endif
                                 <div class="dropdown-divider"></div>
                                 <a href="#" class="dropdown-item logout-trigger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                     <i class="fas fa-sign-out-alt"></i>
@@ -129,10 +135,16 @@
                                         <i class="fas fa-user-circle"></i>
                                         <span>Profil Saya</span>
                                     </a>
-                                    <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
-                                        <i class="fas fa-user-shield"></i>
-                                        <span>Admin Panel</span>
+                                    <a href="{{ route('rentals.index') }}" class="dropdown-item">
+                                        <i class="fas fa-shopping-bag"></i>
+                                        <span>Pesanan Saya</span>
                                     </a>
+                                    @if(Auth::user()->isAdmin())
+                                        <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
+                                            <i class="fas fa-user-shield"></i>
+                                            <span>Admin Panel</span>
+                                        </a>
+                                    @endif
                                     <div class="dropdown-divider"></div>
                                     <a href="#" class="dropdown-item logout-trigger" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         <i class="fas fa-sign-out-alt"></i>

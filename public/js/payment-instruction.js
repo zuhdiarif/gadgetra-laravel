@@ -97,7 +97,34 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (openBookingCodeBtn) {
         openBookingCodeBtn.addEventListener('click', function () {
-            window.location.href = '/booking/code';
+            const rentalStart = localStorage.getItem('rentalStartDate') || '22/11/26';
+            const rentalEnd = localStorage.getItem('rentalEndDate') || '23/11/26';
+            const rentalQty = parseInt(localStorage.getItem('rentalQty')) || 1;
+            const totalTagihan = parseInt(localStorage.getItem('totalTagihan')) || 0;
+            const productName = localStorage.getItem('productName') || 'Sony Alpha IV';
+            const productSlug = localStorage.getItem('productSlug') || 'sony-alpha-iv';
+            const productImage = localStorage.getItem('productImage') || 'Sony Alpha A7 IV Camera.png';
+
+            $.ajax({
+                url: '/booking/store',
+                type: 'POST',
+                data: {
+                    _token: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    start_date: rentalStart,
+                    end_date: rentalEnd,
+                    qty: rentalQty,
+                    total_price: totalTagihan,
+                    product_name: productName,
+                    product_slug: productSlug,
+                    product_image: productImage.split('/').pop()
+                },
+                success: function () {
+                    window.location.href = '/booking/code';
+                },
+                error: function () {
+                    window.location.href = '/booking/code';
+                }
+            });
         });
     }
 });

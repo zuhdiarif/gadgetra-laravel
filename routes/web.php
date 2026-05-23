@@ -33,6 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/payment/method', [PaymentController::class, 'method'])->name('payment.method');
     Route::get('/payment/instruction', [PaymentController::class, 'instruction'])->name('payment.instruction');
     Route::get('/booking/code', [PaymentController::class, 'bookingCode'])->name('booking.code');
+    Route::post('/booking/store', [PaymentController::class, 'storeBooking'])->name('booking.store');
+    Route::get('/profile/rentals', [ProfileController::class, 'rentals'])->name('rentals.index');
+
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::get('/admin/transactions', [AdminController::class, 'transactions'])->name('admin.transactions');
     Route::get('/admin/transactions/{code}', [AdminController::class, 'transactionDetail'])->name('admin.transactions.show');

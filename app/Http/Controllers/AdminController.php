@@ -9,6 +9,16 @@ use Illuminate\Support\Str;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            if (!$request->user() || !$request->user()->isAdmin()) {
+                abort(403, 'Unauthorized.');
+            }
+            return $next($request);
+        });
+    }
+
     private function getSimulatedTransactions()
     {
         return [

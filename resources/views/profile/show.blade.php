@@ -33,6 +33,9 @@
                 <button class="btn-edit-profile" id="openEditModal">
                     <i class="fas fa-pen"></i> Edit Profile
                 </button>
+                <a href="{{ route('rentals.index') }}" class="btn-edit-profile" style="margin-top: 10px; background-color: #002D72; text-decoration: none; text-align: center; justify-content: center; display: flex;">
+                    <i class="fas fa-shopping-bag"></i> Pesanan Saya
+                </a>
             </div>
             <div class="premium-card">
                 <div class="premium-content">
@@ -104,7 +107,10 @@
             </div>
 
             <div class="rentals-section">
-                <h3>Recent Rentals</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="margin: 0;">Recent Rentals</h3>
+                    <a href="{{ route('rentals.index') }}" style="color: #FF9900; font-weight: 600; font-size: 14px; text-decoration: none;">Lihat Semua <i class="fas fa-arrow-right"></i></a>
+                </div>
                 <div class="rentals-grid">
                     <div class="rental-card">
                         <img src="{{ asset('assets/products/Sony image.png') }}" alt="Sony">
