@@ -1,0 +1,217 @@
+:root {
+    --primary-blue: #002D72;
+    --primary-orange: #FF9900;
+    --text-dark: #1A1A1A;
+    --text-muted: #666666;
+    --white: #FFFFFF;
+    --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --border-color: #EEEEEE;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 20px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+    flex-wrap: wrap;
+}
+
+.breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.breadcrumb a:hover {
+    color: var(--primary-blue);
+}
+
+.breadcrumb i {
+    font-size: 10px;
+}
+
+.breadcrumb span {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.bc-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0 80px;
+}
+
+.bc-card {
+    background: var(--white);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 44px;
+    box-shadow: var(--card-shadow);
+    width: 100%;
+    max-width: 800px;
+}
+
+.bc-card-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.bc-divider {
+    border: 0;
+    height: 1px;
+    background: var(--border-color);
+    margin: 20px 0;
+}
+
+.bc-body {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.bc-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.bc-product-row {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.bc-product-img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 12px;
+    background: #FAFAFA;
+    border: 1px solid var(--border-color);
+    padding: 10px;
+    flex-shrink: 0;
+}
+
+.bc-product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+}
+
+.bc-product-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 4px;
+}
+
+.bc-product-meta {
+    font-size: 14px;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+.bc-product-price {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-orange);
+    margin-top: 2px;
+}
+
+.bc-address-block {
+    margin-top: 4px;
+}
+
+.bc-label-muted {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #999999;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+}
+
+.bc-address-text {
+    font-size: 15px;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.bc-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
+.bc-qr-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    display: block;
+}
+
+.bc-label-booking {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.bc-code-box {
+    background: var(--primary-orange);
+    color: var(--white);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border-radius: 12px;
+    padding: 14px 28px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(245, 166, 35, 0.35);
+    width: 100%;
+}
+
+.bc-footer-note {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .bc-card {
+        padding: 24px 20px;
+    }
+
+    .bc-body {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .bc-right {
+        width: 100%;
+    }
+
+    .bc-code-box {
+        font-size: 18px;
+    }
+
+    .bc-product-img {
+        width: 90px;
+        height: 90px;
+    }
+
+    .bc-product-name {
+        font-size: 17px;
+    }
+}
