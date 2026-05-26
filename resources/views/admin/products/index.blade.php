@@ -52,13 +52,18 @@
                                 
                                 <div class="product-admin-actions">
                                     <span class="product-admin-stock">Stok: {{ $product->stock }} unit</span>
-                                    <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn-delete-admin" title="Hapus Produk">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
-                                    </form>
+                                    <div style="display: flex; align-items: center; gap: 0.25rem;">
+                                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn-edit-admin" title="Edit Produk">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form action="{{ route('admin.products.delete', $product->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-delete-admin" title="Hapus Produk">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>

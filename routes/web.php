@@ -40,6 +40,10 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
         Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
         Route::get('/admin/products/create', [AdminController::class, 'createProduct'])->name('admin.products.create');
         Route::post('/admin/products/store', [AdminController::class, 'storeProduct'])->name('admin.products.store');
+        Route::get('/admin/products/{id}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit')
+            ->where('id', '[0-9]+');
+        Route::put('/admin/products/{id}/update', [AdminController::class, 'updateProduct'])->name('admin.products.update')
+            ->where('id', '[0-9]+');
         Route::delete('/admin/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete')
             ->where('id', '[0-9]+');
         Route::get('/admin/products/returns', [AdminController::class, 'returns'])->name('admin.products.returns');

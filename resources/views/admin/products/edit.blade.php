@@ -1,17 +1,17 @@
 @extends('layouts.admin')
 
-@section('title', 'Tambah Produk - Gadgetra')
+@section('title', 'Edit Produk - Gadgetra')
 
 @section('content')
 <div class="admin-title-row">
-    <h1 class="admin-title">Tambah Produk</h1>
+    <h1 class="admin-title">Edit Produk</h1>
 </div>
 
 <div class="double-bezel-wrapper">
     <div class="double-bezel-inner">
         <div class="product-manage-layout">
             <aside class="product-manage-nav">
-                <a href="{{ route('admin.products.create') }}" class="product-manage-nav-item active">
+                <a href="{{ route('admin.products.create') }}" class="product-manage-nav-item">
                     <i class="fas fa-plus"></i>
                     <span>Tambah</span>
                 </a>
@@ -36,81 +36,90 @@
                     </div>
                 @endif
 
-                <form action="{{ route('admin.products.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('admin.products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
                     <div class="form-grid">
                         <div>
                             <label class="form-label">Nama Alat</label>
-                            <input type="text" name="name" value="{{ old('name') }}" class="form-input" required placeholder="Masukkan nama alat...">
+                            <input type="text" name="name" value="{{ old('name', $product->name) }}" class="form-input" required placeholder="Masukkan nama alat...">
                         </div>
                         
                         <div>
                             <label class="form-label">Jumlah Unit</label>
-                            <input type="number" name="stock" value="{{ old('stock', 1) }}" class="form-input" required min="1">
+                            <input type="number" name="stock" value="{{ old('stock', $product->stock) }}" class="form-input" required min="0">
                         </div>
 
                         <div>
                             <label class="form-label">Harga Sewa / hari</label>
-                            <input type="number" name="price_per_day" value="{{ old('price_per_day') }}" class="form-input" required placeholder="Rp">
+                            <input type="number" name="price_per_day" value="{{ old('price_per_day', $product->price_per_day) }}" class="form-input" required placeholder="Rp">
                         </div>
 
                         <div>
                             <label class="form-label">Jenis Alat / Kategori</label>
                             <select name="category" class="form-select" required>
                                 <option value="">Pilih Kategori</option>
-                                <option value="Smartphone" {{ old('category') === 'Smartphone' ? 'selected' : '' }}>Smartphone</option>
-                                <option value="Laptop" {{ old('category') === 'Laptop' ? 'selected' : '' }}>Laptop</option>
-                                <option value="Kamera" {{ old('category') === 'Kamera' ? 'selected' : '' }}>Kamera</option>
-                                <option value="Konsol Game" {{ old('category') === 'Konsol Game' ? 'selected' : '' }}>Konsol Game</option>
+                                <option value="Smartphone" {{ old('category', $product->category) === 'Smartphone' ? 'selected' : '' }}>Smartphone</option>
+                                <option value="Laptop" {{ old('category', $product->category) === 'Laptop' ? 'selected' : '' }}>Laptop</option>
+                                <option value="Kamera" {{ old('category', $product->category) === 'Kamera' ? 'selected' : '' }}>Kamera</option>
+                                <option value="Konsol Game" {{ old('category', $product->category) === 'Konsol Game' ? 'selected' : '' }}>Konsol Game</option>
                             </select>
                         </div>
 
                         <div>
                             <label class="form-label">Kondisi Fisik</label>
-                            <input type="text" name="condition_fisik" value="{{ old('condition_fisik', 'Sangat Mulus (98%)') }}" class="form-input" required>
+                            <input type="text" name="condition_fisik" value="{{ old('condition_fisik', $product->conditions['Fisik'] ?? '') }}" class="form-input" required>
                         </div>
 
                         <div>
                             <label class="form-label">Kondisi Fungsi</label>
-                            <input type="text" name="condition_fungsi" value="{{ old('condition_fungsi', '100% Normal') }}" class="form-input" required>
+                            <input type="text" name="condition_fungsi" value="{{ old('condition_fungsi', $product->conditions['Fungsi'] ?? '') }}" class="form-input" required>
                         </div>
 
                         <div class="form-group-full">
                             <label class="form-label">Kondisi Kelengkapan</label>
-                            <input type="text" name="condition_kelengkapan" value="{{ old('condition_kelengkapan') }}" class="form-input" required placeholder="e.g. Unit charger, tas pelindung, kabel data">
+                            <input type="text" name="condition_kelengkapan" value="{{ old('condition_kelengkapan', $product->conditions['Kelengkapan'] ?? '') }}" class="form-input" required placeholder="e.g. Unit charger, tas pelindung, kabel data">
                         </div>
 
                         <div>
                             <label class="form-label">Processor (Opsional)</label>
-                            <input type="text" name="spec_processor" value="{{ old('spec_processor') }}" class="form-input" placeholder="e.g. Intel i7 / Apple M3">
+                            <input type="text" name="spec_processor" value="{{ old('spec_processor', $product->specifications['Processor'] ?? '') }}" class="form-input" placeholder="e.g. Intel i7 / Apple M3">
                         </div>
 
                         <div>
                             <label class="form-label">RAM (Opsional)</label>
-                            <input type="text" name="spec_ram" value="{{ old('spec_ram') }}" class="form-input" placeholder="e.g. 16GB">
+                            <input type="text" name="spec_ram" value="{{ old('spec_ram', $product->specifications['RAM'] ?? '') }}" class="form-input" placeholder="e.g. 16GB">
                         </div>
 
                         <div>
                             <label class="form-label">Penyimpanan (Opsional)</label>
-                            <input type="text" name="spec_storage" value="{{ old('spec_storage') }}" class="form-input" placeholder="e.g. 512GB SSD">
+                            <input type="text" name="spec_storage" value="{{ old('spec_storage', $product->specifications['Penyimpanan'] ?? '') }}" class="form-input" placeholder="e.g. 512GB SSD">
                         </div>
 
                         <div>
                             <label class="form-label">Spesifikasi Lainnya (Opsional)</label>
-                            <input type="text" name="spec_display" value="{{ old('spec_display') }}" class="form-input" placeholder="e.g. Layar 14 inch Retina">
+                            <input type="text" name="spec_display" value="{{ old('spec_display', $product->specifications['Layar'] ?? '') }}" class="form-input" placeholder="e.g. Layar 14 inch Retina">
                         </div>
 
                         <div class="form-group-full">
                             <label class="form-label">Detail Deskripsi Alat</label>
-                            <textarea name="description" class="form-textarea" required placeholder="Masukkan detail spesifikasi dan kegunaan alat...">{{ old('description') }}</textarea>
+                            <textarea name="description" class="form-textarea" required placeholder="Masukkan detail spesifikasi dan kegunaan alat...">{{ old('description', $product->description) }}</textarea>
                         </div>
 
                         <div class="form-group-full">
-                            <label class="form-label">Foto Alat</label>
+                            <label class="form-label">Foto Alat Saat Ini</label>
+                            <div style="margin-bottom: 1rem; display: flex; align-items: center; gap: 1.5rem;">
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" style="width: 120px; height: 120px; object-fit: contain; border: 1px solid #e2e8f0; border-radius: 1rem; background-color: #f8fafc;">
+                                <span style="font-size: 0.875rem; color: #64748b;">Gambar aktif: {{ $product->image }}</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group-full">
+                            <label class="form-label">Ganti Foto Alat (Opsional)</label>
                             <div class="form-file-picker">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <span class="form-file-picker-label" id="filePickerLabel">Klik atau seret file gambar ke sini (Max 5MB)</span>
-                                <input type="file" name="photo" id="photoInput" required accept="image/*">
+                                <span class="form-file-picker-label" id="filePickerLabel">Klik atau seret file gambar ke sini untuk mengganti (Max 5MB)</span>
+                                <input type="file" name="photo" id="photoInput" accept="image/*">
                             </div>
                         </div>
                     </div>
@@ -118,7 +127,7 @@
                     <div class="form-actions">
                         <button type="submit" class="btn-submit-admin">
                             <i class="fas fa-save"></i>
-                            <span>Save Produk</span>
+                            <span>Update Produk</span>
                         </button>
                     </div>
                 </form>
@@ -139,7 +148,7 @@
                 if (fileInput.files.length > 0) {
                     fileLabel.textContent = 'Terpilih: ' + fileInput.files[0].name;
                 } else {
-                    fileLabel.textContent = 'Klik atau seret file gambar ke sini (Max 5MB)';
+                    fileLabel.textContent = 'Klik atau seret file gambar ke sini untuk mengganti (Max 5MB)';
                 }
             });
         }

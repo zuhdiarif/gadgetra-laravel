@@ -189,16 +189,15 @@ class AdminController extends Controller
     public function storeProduct(Request $request)
     {
         $allowedCategories = ['Smartphone', 'Laptop', 'Kamera', 'Konsol Game'];
-        $allowedConditions = ['Sempurna', 'Baik', 'Cukup'];
 
         $request->validate([
             'name'                  => 'required|string|min:3|max:255',
             'category'              => 'required|in:' . implode(',', $allowedCategories),
             'price_per_day'         => 'required|numeric|min:1000|max:10000000',
             'stock'                 => 'required|integer|min:0|max:1000',
-            'condition_fisik'       => 'required|in:' . implode(',', $allowedConditions),
-            'condition_fungsi'      => 'required|in:' . implode(',', $allowedConditions),
-            'condition_kelengkapan' => 'required|in:' . implode(',', $allowedConditions),
+            'condition_fisik'       => 'required|string|max:255',
+            'condition_fungsi'      => 'required|string|max:255',
+            'condition_kelengkapan' => 'required|string|max:255',
             'spec_processor'        => 'nullable|string|max:100',
             'spec_ram'              => 'nullable|string|max:50',
             'spec_storage'          => 'nullable|string|max:50',
@@ -218,6 +217,46 @@ class AdminController extends Controller
         Product::addProduct($data, $request->file('photo'));
 
         return redirect()->route('admin.products')->with('success', 'Product created successfully.');
+    }
+
+    public function editProduct($id)
+    {
+        $product = Product::findOrFail((int) $id);
+        return view('admin.products.edit', compact('product'));
+    }
+
+    public function updateProduct(Request $request, $id)
+    {
+        $product = Product::findOrFail((int) $id);
+        $allowedCategories = ['Smartphone', 'Laptop', 'Kamera', 'Konsol Game'];
+
+        $request->validate([
+            'name'                  => 'required|string|min:3|max:255',
+            'category'              => 'required|in:' . implode(',', $allowedCategories),
+            'price_per_day'         => 'required|numeric|min:1000|max:10000000',
+            'stock'                 => 'required|integer|min:0|max:1000',
+            'condition_fisik'       => 'required|string|max:255',
+            'condition_fungsi'      => 'required|string|max:255',
+            'condition_kelengkapan' => 'required|string|max:255',
+            'spec_processor'        => 'nullable|string|max:100',
+            'spec_ram'              => 'nullable|string|max:50',
+            'spec_storage'          => 'nullable|string|max:50',
+            'spec_display'          => 'nullable|string|max:100',
+            'spec_battery'          => 'nullable|string|max:100',
+            'description'           => 'required|string|max:2000',
+            'photo'                 => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+        ]);
+
+        $data = $request->only([
+            'name', 'category', 'price_per_day', 'stock',
+            'condition_fisik', 'condition_fungsi', 'condition_kelengkapan',
+            'spec_processor', 'spec_ram', 'spec_storage', 'spec_display', 'spec_battery',
+            'description',
+        ]);
+
+        $product->updateProduct($data, $request->file('photo'));
+
+        return redirect()->route('admin.products')->with('success', 'Product updated successfully.');
     }
 
     public function deleteProduct($id)
