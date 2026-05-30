@@ -135,7 +135,7 @@
                     </div>
                 </div>
 
-                <div class="rental-bar-actions" style="display: flex; align-items: center; gap: 12px;">
+                <div class="rental-bar-actions">
                     <button class="btn-orange-cart" id="addToCartBtn" type="button" title="Masukkan Keranjang"
                             data-id="{{ $product->id }}"
                             data-name="{{ $product->name }}"

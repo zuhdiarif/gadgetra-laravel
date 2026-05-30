@@ -342,6 +342,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 24px;
     width: 100%;
     margin-top: 20px;
     transition: var(--transition);
@@ -419,7 +420,7 @@
     align-items: center;
     border-bottom: 2px solid var(--text-dark);
     padding-bottom: 2px;
-    width: 110px;
+    width: 120px;
 }
 
 .date-input-wrapper input {
@@ -449,6 +450,13 @@
     font-size: 16px;
     font-weight: 600;
     color: var(--text-dark);
+}
+
+.rental-bar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 
 .btn-orange-cart {
