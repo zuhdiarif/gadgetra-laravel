@@ -36,7 +36,7 @@
                 </div>
                 <div class="auth-buttons" style="display: flex; align-items: center; gap: 1rem;">
                     @auth
-                        <a href="{{ route('cart.index') }}" class="cart-icon-btn" style="color: #fff; font-size: 1.25rem; display: flex; align-items: center; position: relative; margin-right: 0.5rem;" title="Keranjang Belanja">
+                        <a href="{{ route('cart.index') }}" class="cart-icon-btn" style="color: var(--primary-blue); font-size: 1.25rem; display: flex; align-items: center; position: relative; margin-right: 0.5rem;" title="Keranjang Belanja">
                             <i class="fas fa-shopping-cart"></i>
                             <span class="cart-count-badge" style="position: absolute; top: -8px; right: -8px; background: #FF9900; color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; font-weight: bold; min-width: 15px; text-align: center;">{{ \App\Models\Cart::where('user_id', Auth::user()->ID)->count() }}</span>
                         </a>
