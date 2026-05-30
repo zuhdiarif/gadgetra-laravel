@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Product;
+use App\Models\Cart;
 
 class PaymentController extends Controller
 {
@@ -31,6 +32,62 @@ class PaymentController extends Controller
 
     public function storeBooking(Request $request)
     {
+        if ($request->input('is_cart') === 'true' || $request->input('is_cart') === true) {
+            $items = json_decode($request->input('items'), true);
+
+            if (empty($items) || !is_array($items)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Keranjang kosong atau data tidak valid.'
+                ], 422);
+            }
+
+            $createdTransactions = [];
+
+            foreach ($items as $item) {
+                $product = Product::where('slug', $item['product_slug'])
+                    ->where('is_active', true)
+                    ->first();
+
+                if (!$product) {
+                    continue;
+                }
+
+                $startTs = strtotime($item['start_date']);
+                $endTs = strtotime($item['end_date']);
+                $days = (int) floor(($endTs - $startTs) / 86400) + 1;
+                $days = max($days, 1);
+                $expectedPrice = ($product->price_per_day * $item['qty'] * $days) + 2000;
+
+                $safeData = [
+                    'product_slug'  => $product->slug,
+                    'product_name'  => $product->name,
+                    'product_image' => basename($product->image),
+                    'qty'           => $item['qty'],
+                    'start_date'    => $item['start_date'],
+                    'end_date'      => $item['end_date'],
+                    'total_price'   => $expectedPrice,
+                ];
+
+                $transaction = Transaction::createTransaction($safeData, auth()->user());
+                $createdTransactions[] = $transaction;
+
+                if (!empty($item['cart_id'])) {
+                    Cart::where('user_id', auth()->user()->ID)
+                        ->where('id', $item['cart_id'])
+                        ->delete();
+                }
+            }
+
+            $codes = array_map(fn($t) => $t->code, $createdTransactions);
+
+            return response()->json([
+                'success' => true,
+                'codes'   => $codes,
+                'code'    => $codes[0] ?? '',
+            ]);
+        }
+
         $validated = $request->validate([
             'product_slug' => 'required|string|max:255|exists:products,slug',
             'product_name' => 'required|string|max:255',

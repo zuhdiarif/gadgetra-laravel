@@ -108,48 +108,85 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (openBookingCodeBtn) {
         openBookingCodeBtn.addEventListener('click', function () {
-            const rentalStart = sanitizeText(localStorage.getItem('rentalStartDate') || '');
-            const rentalEnd = sanitizeText(localStorage.getItem('rentalEndDate') || '');
-            const rentalStartDisplay = sanitizeText(localStorage.getItem('rentalStartDateDisplay') || rentalStart);
-            const rentalEndDisplay = sanitizeText(localStorage.getItem('rentalEndDateDisplay') || rentalEnd);
-            const rentalQty = Math.max(1, Math.min(10, parseInt(localStorage.getItem('rentalQty') || '1', 10)));
-            const totalTagihan = Math.max(0, parseInt(localStorage.getItem('totalTagihan') || '0', 10));
-            const slug = (localStorage.getItem('productSlug') || '').replace(/[^a-z0-9-]/g, '');
-
             const csrfToken = document.querySelector('meta[name="csrf-token"]');
             if (!csrfToken) return;
 
-            $.ajax({
-                url: '/booking/store',
-                type: 'POST',
-                data: {
-                    _token: csrfToken.getAttribute('content'),
-                    start_date: rentalStart,
-                    end_date: rentalEnd,
-                    qty: rentalQty,
-                    total_price: totalTagihan,
-                    product_slug: slug,
-                    product_name: productName,
-                    product_image: sanitizeText(localStorage.getItem('productImage') || '').split('/').pop()
-                },
-                success: function (response) {
-                    if (response && response.code) {
-                        localStorage.setItem('bookingCode', response.code);
+            const isCart = localStorage.getItem('isCartCheckout') === 'true';
+
+            if (isCart) {
+                const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
+                const itemsData = checkoutItems.map(item => ({
+                    cart_id: item.cart_id,
+                    product_slug: item.product_slug,
+                    product_name: item.product_name,
+                    product_image: item.product_image.split('/').pop(),
+                    qty: item.qty,
+                    start_date: item.start_date,
+                    end_date: item.end_date,
+                }));
+
+                $.ajax({
+                    url: '/booking/store',
+                    type: 'POST',
+                    data: {
+                        _token: csrfToken.getAttribute('content'),
+                        is_cart: true,
+                        items: JSON.stringify(itemsData)
+                    },
+                    success: function (response) {
+                        if (response && response.codes) {
+                            localStorage.setItem('bookingCodes', JSON.stringify(response.codes));
+                            localStorage.setItem('bookingCode', response.code);
+                        }
+                        window.location.href = '/booking/code';
+                    },
+                    error: function (xhr) {
+                        var msg = 'Booking gagal. Silakan coba lagi.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = 'Booking gagal: ' + xhr.responseJSON.message;
+                        }
+                        alert(msg);
                     }
-                    window.location.href = '/booking/code';
-                },
-                error: function (xhr) {
-                    var msg = 'Booking gagal. Silakan coba lagi.';
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        msg = 'Booking gagal: ' + xhr.responseJSON.message;
-                    } else if (xhr.status === 500) {
-                        msg = 'Terjadi kesalahan server. Silakan coba lagi.';
-                    } else if (xhr.status === 404) {
-                        msg = 'Produk tidak ditemukan. Silakan kembali ke halaman produk.';
+                });
+            } else {
+                const rentalStart = sanitizeText(localStorage.getItem('rentalStartDate') || '');
+                const rentalEnd = sanitizeText(localStorage.getItem('rentalEndDate') || '');
+                const rentalQty = Math.max(1, Math.min(10, parseInt(localStorage.getItem('rentalQty') || '1', 10)));
+                const totalTagihan = Math.max(0, parseInt(localStorage.getItem('totalTagihan') || '0', 10));
+                const slug = (localStorage.getItem('productSlug') || '').replace(/[^a-z0-9-]/g, '');
+
+                $.ajax({
+                    url: '/booking/store',
+                    type: 'POST',
+                    data: {
+                        _token: csrfToken.getAttribute('content'),
+                        start_date: rentalStart,
+                        end_date: rentalEnd,
+                        qty: rentalQty,
+                        total_price: totalTagihan,
+                        product_slug: slug,
+                        product_name: productName,
+                        product_image: sanitizeText(localStorage.getItem('productImage') || '').split('/').pop()
+                    },
+                    success: function (response) {
+                        if (response && response.code) {
+                            localStorage.setItem('bookingCode', response.code);
+                        }
+                        window.location.href = '/booking/code';
+                    },
+                    error: function (xhr) {
+                        var msg = 'Booking gagal. Silakan coba lagi.';
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            msg = 'Booking gagal: ' + xhr.responseJSON.message;
+                        } else if (xhr.status === 500) {
+                            msg = 'Terjadi kesalahan server. Silakan coba lagi.';
+                        } else if (xhr.status === 404) {
+                            msg = 'Produk tidak ditemukan. Silakan kembali ke halaman produk.';
+                        }
+                        alert(msg);
                     }
-                    alert(msg);
-                }
-            });
+                });
+            }
         });
     }
 });

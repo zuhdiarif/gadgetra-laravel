@@ -20,14 +20,16 @@
 
             <div class="bc-body">
                 <div class="bc-left">
-                    <div class="bc-product-row">
-                        <img class="bc-product-img" src="{{ asset('assets/products/Sony Alpha A7 IV Camera.png') }}" alt="Sony Alpha IV">
-                        <div class="bc-product-info">
-                            <div class="bc-product-name">Sony Alpha IV</div>
-                            <div class="bc-product-meta" id="bcTanggalSewa">Tanggal sewa: 22/11/26 - 23/11/26</div>
-                            <div class="bc-product-meta" id="bcJumlah">Jumlah : X buah</div>
-                            <div class="bc-product-meta">Total Biaya Sewa:</div>
-                            <div class="bc-product-price" id="bcTotalBiaya">RpXXX.000</div>
+                    <div id="bookingProductsList">
+                        <div class="bc-product-row">
+                            <img class="bc-product-img" src="{{ asset('assets/products/Sony Alpha A7 IV Camera.png') }}" alt="Sony Alpha IV">
+                            <div class="bc-product-info">
+                                <div class="bc-product-name">Sony Alpha IV</div>
+                                <div class="bc-product-meta" id="bcTanggalSewa">Tanggal sewa: 22/11/26 - 23/11/26</div>
+                                <div class="bc-product-meta" id="bcJumlah">Jumlah : X buah</div>
+                                <div class="bc-product-meta">Total Biaya Sewa:</div>
+                                <div class="bc-product-price" id="bcTotalBiaya">RpXXX.000</div>
+                            </div>
                         </div>
                     </div>
 
@@ -44,7 +46,7 @@
                         src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TYZ10CH6U"
                         alt="QR Code Booking">
                     <span class="bc-label-booking">Kode Booking :</span>
-                    <div class="bc-code-box">TYZ10CH6U</div>
+                    <div class="bc-code-box" id="bcBookingCode">TYZ10CH6U</div>
                 </div>
             </div>
 

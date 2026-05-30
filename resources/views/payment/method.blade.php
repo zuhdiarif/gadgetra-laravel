@@ -23,15 +23,17 @@
             </div>
 
             <div class="white-shadow-card">
-                <div class="product-item-title">Sony Alpha IV</div>
-                <div class="product-item-body">
-                    <div class="product-item-image">
-                        <img src="{{ asset('assets/products/Sony Alpha A7 IV Camera.png') }}" alt="Sony Alpha IV">
-                    </div>
-                    <div class="product-item-details">
-                        <div class="product-item-meta" id="displayMasaSewa">Masa Sewa : 3 Hari</div>
-                        <div class="product-item-price">Rp 300rb/hari</div>
-                        <div class="product-item-meta" id="displayJumlah">Jumlah : 1 buah</div>
+                <div id="checkoutProductsList">
+                    <div class="product-item-title">Sony Alpha IV</div>
+                    <div class="product-item-body">
+                        <div class="product-item-image">
+                            <img src="{{ asset('assets/products/Sony Alpha A7 IV Camera.png') }}" alt="Sony Alpha IV">
+                        </div>
+                        <div class="product-item-details">
+                            <div class="product-item-meta" id="displayMasaSewa">Masa Sewa : 3 Hari</div>
+                            <div class="product-item-price">Rp 300rb/hari</div>
+                            <div class="product-item-meta" id="displayJumlah">Jumlah : 1 buah</div>
+                        </div>
                     </div>
                 </div>
 

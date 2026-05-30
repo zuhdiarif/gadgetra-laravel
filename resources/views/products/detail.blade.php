@@ -135,14 +135,24 @@
                     </div>
                 </div>
 
-                <button class="btn-orange-cart" id="addToCartBtn" type="button" title="Masukkan Keranjang"
-                        data-id="{{ $product->id }}"
-                        data-name="{{ $product->name }}"
-                        data-price="{{ $product->price_per_day }}"
-                        data-image="{{ $product->image_url }}"
-                        data-slug="{{ $product->slug }}">
-                    <i class="fas fa-shopping-cart"></i>
-                </button>
+                <div class="rental-bar-actions" style="display: flex; align-items: center; gap: 12px;">
+                    <button class="btn-orange-cart" id="addToCartBtn" type="button" title="Masukkan Keranjang"
+                            data-id="{{ $product->id }}"
+                            data-name="{{ $product->name }}"
+                            data-price="{{ $product->price_per_day }}"
+                            data-image="{{ $product->image_url }}"
+                            data-slug="{{ $product->slug }}">
+                        <i class="fas fa-shopping-cart"></i>
+                    </button>
+                    <button class="btn-direct-checkout" id="directCheckoutBtn" type="button" title="Sewa Sekarang"
+                            data-id="{{ $product->id }}"
+                            data-name="{{ $product->name }}"
+                            data-price="{{ $product->price_per_day }}"
+                            data-image="{{ $product->image_url }}"
+                            data-slug="{{ $product->slug }}">
+                        Sewa Sekarang
+                    </button>
+                </div>
             </div>
         </div>
     </div>

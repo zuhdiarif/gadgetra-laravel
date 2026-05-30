@@ -36,6 +36,11 @@ class User extends Authenticatable
         'created_at' => 'datetime',
     ];
 
+    public function carts()
+    {
+        return $this->hasMany(Cart::class, 'user_id', 'ID');
+    }
+
     public function getAvatarUrlAttribute(): string
     {
         if (!empty($this->avatar) && file_exists(public_path('uploads/' . basename($this->avatar)))) {

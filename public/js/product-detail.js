@@ -205,7 +205,9 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
+
     const addToCartBtn = document.getElementById('addToCartBtn');
+    const directCheckoutBtn = document.getElementById('directCheckoutBtn');
     const toast = document.getElementById('notificationToast');
     const toastMessage = document.getElementById('notificationMessage');
 
@@ -228,41 +230,97 @@ document.addEventListener('DOMContentLoaded', function () {
         }, 3500);
     }
 
-    addToCartBtn.addEventListener('click', () => {
-        const qty = qtyInput.value;
-        const startVal = startDateInput.value;
-        const endVal = endDateInput.value;
+    if (addToCartBtn) {
+        addToCartBtn.addEventListener('click', () => {
+            const qty = qtyInput.value;
+            const startVal = startDateInput.value;
+            const endVal = endDateInput.value;
 
-        if (!startVal || !endVal) {
-            showToast('Silakan pilih tanggal mulai dan selesai sewa pada kalender terlebih dahulu!', false);
+            if (!startVal || !endVal) {
+                showToast('Silakan pilih tanggal mulai dan selesai sewa pada kalender terlebih dahulu!', false);
 
-            const calendarContainer = document.querySelector('.calendar-widget-container');
-            calendarContainer.style.animation = 'shake 0.5s ease-in-out';
-            setTimeout(() => {
-                calendarContainer.style.animation = '';
-            }, 500);
-            return;
-        }
+                const calendarContainer = document.querySelector('.calendar-widget-container');
+                calendarContainer.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    calendarContainer.style.animation = '';
+                }, 500);
+                return;
+            }
 
-        const durationDays = Math.round((rentalEndDate - rentalStartDate) / (1000 * 3600 * 24)) + 1;
-        const name = addToCartBtn.getAttribute('data-name') || 'Sony Alpha IV';
-        const price = addToCartBtn.getAttribute('data-price') || '300000';
-        const image = addToCartBtn.getAttribute('data-image') || '/assets/products/Sony Alpha A7 IV Camera.png';
-        const slug = addToCartBtn.getAttribute('data-slug') || 'sony-alpha-iv';
+            const productId = addToCartBtn.getAttribute('data-id');
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
 
-        localStorage.setItem('rentalQty', qty);
-        localStorage.setItem('rentalStartDate', formatDateISO(rentalStartDate));
-        localStorage.setItem('rentalEndDate', formatDateISO(rentalEndDate));
-        localStorage.setItem('rentalStartDateDisplay', formatDateDisplay(rentalStartDate));
-        localStorage.setItem('rentalEndDateDisplay', formatDateDisplay(rentalEndDate));
-        localStorage.setItem('rentalDurationDays', durationDays);
-        localStorage.setItem('productName', name);
-        localStorage.setItem('productPrice', price);
-        localStorage.setItem('productImage', image);
-        localStorage.setItem('productSlug', slug);
+            if (!csrfToken) return;
 
-        window.location.href = '/payment/method';
-    });
+            $.ajax({
+                url: '/cart/add',
+                type: 'POST',
+                data: {
+                    _token: csrfToken.getAttribute('content'),
+                    product_id: productId,
+                    qty: qty,
+                    start_date: formatDateISO(rentalStartDate),
+                    end_date: formatDateISO(rentalEndDate)
+                },
+                success: function (response) {
+                    if (response && response.success) {
+                        showToast(response.message, true);
+                        document.querySelectorAll('.cart-count-badge').forEach(badge => {
+                            badge.textContent = response.cart_count;
+                        });
+                    }
+                },
+                error: function (xhr) {
+                    if (xhr.status === 401) {
+                        window.location.href = '/login';
+                    } else {
+                        const errMsg = (xhr.responseJSON && xhr.responseJSON.message) ? xhr.responseJSON.message : 'Gagal menambahkan ke keranjang.';
+                        showToast(errMsg, false);
+                    }
+                }
+            });
+        });
+    }
+
+    if (directCheckoutBtn) {
+        directCheckoutBtn.addEventListener('click', () => {
+            const qty = qtyInput.value;
+            const startVal = startDateInput.value;
+            const endVal = endDateInput.value;
+
+            if (!startVal || !endVal) {
+                showToast('Silakan pilih tanggal mulai dan selesai sewa pada kalender terlebih dahulu!', false);
+
+                const calendarContainer = document.querySelector('.calendar-widget-container');
+                calendarContainer.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    calendarContainer.style.animation = '';
+                }, 500);
+                return;
+            }
+
+            const durationDays = Math.round((rentalEndDate - rentalStartDate) / (1000 * 3600 * 24)) + 1;
+            const name = directCheckoutBtn.getAttribute('data-name');
+            const price = directCheckoutBtn.getAttribute('data-price');
+            const image = directCheckoutBtn.getAttribute('data-image');
+            const slug = directCheckoutBtn.getAttribute('data-slug');
+
+            localStorage.removeItem('isCartCheckout');
+            localStorage.setItem('rentalQty', qty);
+            localStorage.setItem('rentalStartDate', formatDateISO(rentalStartDate));
+            localStorage.setItem('rentalEndDate', formatDateISO(rentalEndDate));
+            localStorage.setItem('rentalStartDateDisplay', formatDateDisplay(rentalStartDate));
+            localStorage.setItem('rentalEndDateDisplay', formatDateDisplay(rentalEndDate));
+            localStorage.setItem('rentalDurationDays', durationDays);
+            localStorage.setItem('productName', name);
+            localStorage.setItem('productPrice', price);
+            localStorage.setItem('productImage', image);
+            localStorage.setItem('productSlug', slug);
+
+            window.location.href = '/payment/method';
+        });
+    }
+
     const styleSheet = document.createElement("style");
     styleSheet.innerText = `
         @keyframes shake {

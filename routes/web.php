@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CartController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/product/{slug}', [ProductController::class, 'detail'])->name('product.detail')
@@ -31,6 +32,11 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
     Route::get('/payment/instruction', [PaymentController::class, 'instruction'])->name('payment.instruction');
     Route::get('/booking/code', [PaymentController::class, 'bookingCode'])->name('booking.code');
     Route::post('/booking/store', [PaymentController::class, 'storeBooking'])->name('booking.store');
+
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::put('/cart/{id}/update', [CartController::class, 'updateCart'])->name('cart.update')->where('id', '[0-9]+');
+    Route::delete('/cart/{id}', [CartController::class, 'deleteCart'])->name('cart.delete')->where('id', '[0-9]+');
 
     Route::middleware('admin')->group(function () {
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

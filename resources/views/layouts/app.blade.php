@@ -31,7 +31,13 @@
                     <i class="fas fa-search" style="color: #ccc;"></i>
                     <input type="text" placeholder="Cari gadget impianmu...">
                 </div>
-                <div class="auth-buttons">
+                <div class="auth-buttons" style="display: flex; align-items: center; gap: 1rem;">
+                    @auth
+                        <a href="{{ route('cart.index') }}" class="cart-icon-btn" style="color: #fff; font-size: 1.25rem; display: flex; align-items: center; position: relative; margin-right: 0.5rem;" title="Keranjang Belanja">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count-badge" style="position: absolute; top: -8px; right: -8px; background: #FF9900; color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; font-weight: bold; min-width: 15px; text-align: center;">{{ \App\Models\Cart::where('user_id', Auth::user()->ID)->count() }}</span>
+                        </a>
+                    @endauth
                     @guest
                         <a href="{{ route('login') }}" class="btn-login">Login</a>
                         <a href="{{ route('register') }}" class="btn-daftar">Daftar</a>
@@ -105,7 +111,14 @@
                     </div>
                     <div class="nav-icons">
                         <a href="#" class="icon-btn"><i class="fas fa-bell"></i></a>
-                        <a href="#" class="icon-btn"><i class="fas fa-shopping-cart"></i></a>
+                        @auth
+                        <a href="{{ route('cart.index') }}" class="icon-btn" style="position: relative;" title="Keranjang Belanja">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count-badge" style="position: absolute; top: -5px; right: -5px; background: #FF9900; color: white; font-size: 0.65rem; padding: 2px 5px; border-radius: 50%; font-weight: bold; min-width: 15px; text-align: center;">{{ \App\Models\Cart::where('user_id', Auth::user()->ID)->count() }}</span>
+                        </a>
+                        @else
+                        <a href="{{ route('cart.index') }}" class="icon-btn" title="Keranjang Belanja"><i class="fas fa-shopping-cart"></i></a>
+                        @endauth
                         @auth
                             <div class="profile-dropdown-wrapper">
                                 <div class="profile-btn {{ request()->routeIs('profile.*') ? 'active' : '' }}">
