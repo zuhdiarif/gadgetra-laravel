@@ -30,7 +30,7 @@
                     <div class="cart-header-row">
                         <span class="cart-title-main">Barang di Keranjang</span>
                         <label class="cart-select-all-label">
-                            <input type="checkbox" id="selectAll" class="cart-item-checkbox">
+                            <input type="checkbox" id="selectAll" class="cart-item-checkbox" checked>
                             <span>Pilih Semua</span>
                         </label>
                     </div>
@@ -43,7 +43,7 @@
                                        data-price="{{ $item->product->price_per_day }}" 
                                        data-slug="{{ $item->product->slug }}" 
                                        data-name="{{ $item->product->name }}" 
-                                       data-image="{{ $item->product->image_url }}">
+                                       data-image="{{ $item->product->image_url }}" checked>
                                 
                                 <div class="cart-item-image">
                                     <img src="{{ $item->product->image_url }}" alt="{{ $item->product->name }}">
@@ -103,7 +103,7 @@
                 </div>
                 <div class="cart-summary-row">
                     <span>Biaya Layanan</span>
-                    <span>Rp0</span>
+                    <span id="serviceFee">Rp0</span>
                 </div>
                 <div class="cart-summary-row total-row">
                     <span>Total Tagihan</span>

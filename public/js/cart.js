@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function calculateTotal() {
         let total = 0;
         let count = 0;
+        let serviceFee = 0;
 
         document.querySelectorAll('.item-checkbox:checked').forEach(cb => {
             count++;
@@ -47,8 +48,18 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        if (count > 0) {
+            serviceFee = count * 2000;
+        }
+
+        const totalTagihan = total + serviceFee;
+
         selectedCountEl.textContent = `${count} Barang`;
-        totalPriceEl.textContent = 'Rp' + total.toLocaleString('id-ID');
+        const serviceFeeEl = document.getElementById('serviceFee');
+        if (serviceFeeEl) {
+            serviceFeeEl.textContent = 'Rp' + serviceFee.toLocaleString('id-ID');
+        }
+        totalPriceEl.textContent = 'Rp' + totalTagihan.toLocaleString('id-ID');
     }
 
     if (selectAllCheckbox) {
@@ -67,6 +78,8 @@ document.addEventListener('DOMContentLoaded', function () {
             calculateTotal();
         });
     });
+
+    calculateTotal();
 
     function updateCartOnServer(id) {
         const itemRow = document.querySelector(`.cart-item[data-id="${id}"]`);
