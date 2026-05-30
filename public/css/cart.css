@@ -357,3 +357,29 @@
         gap: 16px;
     }
 }
+
+.notification-toast {
+    position: fixed;
+    bottom: 30px;
+    right: -350px;
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    transition: right 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 9999;
+}
+
+.notification-toast.show {
+    right: 30px;
+}
+
+.notification-toast i {
+    font-size: 20px;
+    color: var(--primary-orange);
+}
