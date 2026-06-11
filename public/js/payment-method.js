@@ -136,7 +136,134 @@ document.addEventListener('DOMContentLoaded', function () {
             const selectedMethod = activePayment.querySelector('.payment-method-text').textContent;
             localStorage.setItem('selectedPaymentMethod', selectedMethod);
 
-            window.location.href = '/payment/instruction';
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            if (!csrfToken) return;
+
+            // Show loading state on button
+            payNowBtn.disabled = true;
+            payNowBtn.textContent = 'Memproses Pembayaran...';
+
+            const isCart = localStorage.getItem('isCartCheckout') === 'true';
+
+            function handlePaymentResponse(response) {
+                if (response && response.success) {
+                    const snapToken = response.snap_token;
+                    const transactionCode = response.code;
+                    const redirectCode = response.codes ? response.codes.join(',') : transactionCode;
+
+                    if (response.codes) {
+                        localStorage.setItem('bookingCodes', JSON.stringify(response.codes));
+                    }
+                    localStorage.setItem('bookingCode', transactionCode);
+
+                    if (snapToken.startsWith('mock-token-')) {
+                        const mockModal = document.getElementById('mockMidtransModal');
+                        const mockTotal = document.getElementById('mockTotalTagihan');
+                        if (mockModal && mockTotal) {
+                            mockTotal.textContent = 'Rp' + totalTagihan.toLocaleString('id-ID');
+                            mockModal.style.display = 'flex';
+
+                            const btnSuccess = document.getElementById('btnMockSuccess');
+                            const btnCancel = document.getElementById('btnMockCancel');
+
+                            btnSuccess.onclick = function() {
+                                mockModal.style.display = 'none';
+                                window.location.href = '/booking/code?code=' + redirectCode;
+                            };
+
+                            btnCancel.onclick = function() {
+                                mockModal.style.display = 'none';
+                                payNowBtn.disabled = false;
+                                payNowBtn.textContent = 'Bayar Sekarang';
+                                alert('Simulasi pembayaran dibatalkan.');
+                            };
+                        }
+                    } else {
+                        if (typeof snap !== 'undefined') {
+                            snap.pay(snapToken, {
+                                onSuccess: function (result) {
+                                    window.location.href = '/booking/code?code=' + redirectCode;
+                                },
+                                onPending: function (result) {
+                                    window.location.href = '/booking/code?code=' + redirectCode;
+                                },
+                                onError: function (result) {
+                                    alert('Pembayaran gagal, silakan coba lagi.');
+                                    payNowBtn.disabled = false;
+                                    payNowBtn.textContent = 'Bayar Sekarang';
+                                },
+                                onClose: function () {
+                                    alert('Anda menutup popup pembayaran.');
+                                    payNowBtn.disabled = false;
+                                    payNowBtn.textContent = 'Bayar Sekarang';
+                                }
+                            });
+                        } else if (response.redirect_url) {
+                            window.location.href = response.redirect_url;
+                        } else {
+                            window.location.href = '/booking/code?code=' + redirectCode;
+                        }
+                    }
+                }
+            }
+
+            function handlePaymentError(xhr) {
+                payNowBtn.disabled = false;
+                payNowBtn.textContent = 'Bayar Sekarang';
+                var msg = 'Transaksi gagal. Silakan coba lagi.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    msg = 'Transaksi gagal: ' + xhr.responseJSON.message;
+                }
+                alert(msg);
+            }
+
+            if (isCart) {
+                const checkoutItems = JSON.parse(localStorage.getItem('checkoutItems') || '[]');
+                const itemsData = checkoutItems.map(item => ({
+                    cart_id: item.cart_id,
+                    product_slug: item.product_slug,
+                    product_name: item.product_name,
+                    product_image: item.product_image.split('/').pop(),
+                    qty: item.qty,
+                    start_date: item.start_date,
+                    end_date: item.end_date,
+                }));
+
+                $.ajax({
+                    url: '/booking/store',
+                    type: 'POST',
+                    data: {
+                        _token: csrfToken.getAttribute('content'),
+                        is_cart: true,
+                        items: JSON.stringify(itemsData)
+                    },
+                    success: handlePaymentResponse,
+                    error: handlePaymentError
+                });
+            } else {
+                const rentalStart = localStorage.getItem('rentalStartDate') || '';
+                const rentalEnd = localStorage.getItem('rentalEndDate') || '';
+                const rentalQty = Math.max(1, Math.min(10, parseInt(localStorage.getItem('rentalQty') || '1', 10)));
+                const slug = (localStorage.getItem('productSlug') || '').replace(/[^a-z0-9-]/g, '');
+                const productName = localStorage.getItem('productName') || 'Gadget';
+
+                $.ajax({
+                    url: '/booking/store',
+                    type: 'POST',
+                    data: {
+                        _token: csrfToken.getAttribute('content'),
+                        start_date: rentalStart,
+                        end_date: rentalEnd,
+                        qty: rentalQty,
+                        total_price: totalTagihan - SERVICE_FEE, // ExpectedPrice is sum of details without service fee, service fee gets added inside controller
+                        product_slug: slug,
+                        product_name: productName,
+                        product_image: (localStorage.getItem('productImage') || '').split('/').pop()
+                    },
+                    success: handlePaymentResponse,
+                    error: handlePaymentError
+                });
+            }
         });
     }
 });

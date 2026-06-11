@@ -110,8 +110,28 @@
             </div>
         </div>
     </div>
+
+    <!-- Mock Midtrans Modal -->
+    <div id="mockMidtransModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: center; justify-content: center;">
+        <div style="background: #fff; border-radius: 12px; width: 90%; max-width: 400px; padding: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">
+            <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px;">
+                <span style="font-weight: 800; font-size: 1.25rem; color: #002D72;">midtrans</span>
+                <span style="background: #FF9900; color: #fff; font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; font-weight: 700;">SANDBOX SIMULATOR</span>
+            </div>
+            <p style="color: #666; font-size: 0.875rem; margin-bottom: 20px; line-height: 1.5;">Anda berada dalam mode uji coba/sandbox. Silakan simulasikan pembayaran untuk melanjutkan proses sewa.</p>
+            <div style="background: #f8f9fa; border: 1px dashed #cbd5e1; border-radius: 8px; padding: 12px; margin-bottom: 20px;">
+                <span style="color: #666; font-size: 0.75rem; display: block; margin-bottom: 4px; font-weight: 600;">TOTAL TAGIHAN</span>
+                <strong id="mockTotalTagihan" style="font-size: 1.25rem; color: #002D72;">Rp0</strong>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="btnMockSuccess" style="background: #FF9900; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 0.9rem;">Simulasikan Pembayaran Sukses</button>
+                <button id="btnMockCancel" style="background: #f1f5f9; color: #475569; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 0.9rem;">Batal / Tutup</button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('scripts')
+    <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-dummy') }}"></script>
     <script src="{{ asset('js/payment-method.js') }}"></script>
 @endpush

@@ -1,9 +1,12 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlCode = urlParams.get('code');
+
     const isCart = localStorage.getItem('isCartCheckout') === 'true';
-    const bookingCode = localStorage.getItem('bookingCode') || '';
-    const bookingCodesStr = localStorage.getItem('bookingCodes');
+    const bookingCode = urlCode || localStorage.getItem('bookingCode') || '';
+    const bookingCodesStr = urlCode ? JSON.stringify(urlCode.split(',')) : localStorage.getItem('bookingCodes');
 
     let qrData = bookingCode || 'TYZ10CH6U';
     let displayCode = bookingCode || 'TYZ10CH6U';
@@ -82,8 +85,11 @@ document.addEventListener('DOMContentLoaded', function () {
         bcCodeEl.textContent = displayCode;
     }
 
-    const bcQrImg = document.querySelector('.bc-qr-img');
-    if (bcQrImg && qrData) {
-        bcQrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=' + encodeURIComponent(qrData);
+    if (qrData) {
+        new QRious({
+            element: document.getElementById('bcQrCanvas'),
+            value: qrData,
+            size: 150
+        });
     }
 });

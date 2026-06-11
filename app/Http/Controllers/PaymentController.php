@@ -25,9 +25,60 @@ class PaymentController extends Controller
         return view('payment.instruction');
     }
 
-    public function bookingCode()
+    public function bookingCode(Request $request)
     {
-        return view('booking.code');
+        $code = $request->query('code');
+        $transactions = [];
+
+        if ($code) {
+            $codes = explode(',', $code);
+            $transactions = Transaction::whereIn('code', $codes)->get();
+
+            $serverKey = env('MIDTRANS_SERVER_KEY');
+            if (!empty($serverKey)) {
+                foreach ($transactions as $transaction) {
+                    if ($transaction->status === 'Belum dibayar' && !empty($transaction->midtrans_order_id)) {
+                        try {
+                            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                                'Accept' => 'application/json',
+                                'Content-Type' => 'application/json',
+                            ])
+                            ->withBasicAuth($serverKey, '')
+                            ->get("https://api.sandbox.midtrans.com/v2/{$transaction->midtrans_order_id}/status");
+
+                            if ($response->successful()) {
+                                $data = $response->json();
+                                $transactionStatus = $data['transaction_status'] ?? '';
+                                $fraudStatus = $data['fraud_status'] ?? '';
+                                $paymentType = $data['payment_type'] ?? '';
+
+                                $status = 'Belum dibayar';
+                                if ($transactionStatus === 'capture') {
+                                    if ($paymentType === 'credit_card') {
+                                        if ($fraudStatus === 'challenge') {
+                                            $status = 'Belum dibayar';
+                                        } else {
+                                            $status = 'Sedang Disewa';
+                                        }
+                                    }
+                                } elseif ($transactionStatus === 'settlement') {
+                                    $status = 'Sedang Disewa';
+                                } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                                    $status = 'Batal';
+                                }
+
+                                Transaction::where('midtrans_order_id', $transaction->midtrans_order_id)
+                                    ->update(['status' => $status]);
+                            }
+                        } catch (\Exception $e) {
+                        }
+                    }
+                }
+                $transactions = Transaction::whereIn('code', $codes)->get();
+            }
+        }
+
+        return view('booking.code', compact('transactions'));
     }
 
     public function storeBooking(Request $request)
@@ -80,11 +131,27 @@ class PaymentController extends Controller
             }
 
             $codes = array_map(fn($t) => $t->code, $createdTransactions);
+            $totalAmount = array_sum(array_map(fn($t) => $t->total_price, $createdTransactions));
+
+            $primaryTransaction = $createdTransactions[0];
+            $res = $this->getMidtransSnapToken($primaryTransaction, $totalAmount, $codes);
+            $snapToken = is_array($res) ? $res['token'] : $res;
+            $redirectUrl = is_array($res) ? ($res['redirect_url'] ?? null) : null;
+            $midtransOrderId = is_array($res) ? $res['order_id'] : $primaryTransaction->code;
+
+            foreach ($createdTransactions as $t) {
+                $t->update([
+                    'payment_token' => $snapToken,
+                    'midtrans_order_id' => $midtransOrderId,
+                ]);
+            }
 
             return response()->json([
                 'success' => true,
                 'codes'   => $codes,
                 'code'    => $codes[0] ?? '',
+                'snap_token' => $snapToken,
+                'redirect_url' => $redirectUrl,
             ]);
         }
 
@@ -135,10 +202,144 @@ class PaymentController extends Controller
         ];
 
         $transaction = Transaction::createTransaction($safeData, auth()->user());
+        $res = $this->getMidtransSnapToken($transaction);
+        $snapToken = is_array($res) ? $res['token'] : $res;
+        $redirectUrl = is_array($res) ? ($res['redirect_url'] ?? null) : null;
+        $midtransOrderId = is_array($res) ? $res['order_id'] : $transaction->code;
+
+        $transaction->update([
+            'payment_token' => $snapToken,
+            'midtrans_order_id' => $midtransOrderId,
+        ]);
 
         return response()->json([
             'success' => true,
             'code'    => $transaction->code,
+            'snap_token' => $snapToken,
+            'redirect_url' => $redirectUrl,
         ]);
+    }
+
+    public function notification(Request $request)
+    {
+        $payload = $request->getContent();
+        $notification = json_decode($payload, true);
+
+        if (!$notification) {
+            return response()->json(['message' => 'Invalid payload'], 400);
+        }
+
+        $midtransOrderId = $notification['order_id'] ?? '';
+        $statusCode = $notification['status_code'] ?? '';
+        $grossAmount = $notification['gross_amount'] ?? '';
+        $signatureKey = $notification['signature_key'] ?? '';
+        $serverKey = env('MIDTRANS_SERVER_KEY');
+
+        $localSignature = hash("sha512", $midtransOrderId . $statusCode . $grossAmount . $serverKey);
+
+        if ($signatureKey !== $localSignature) {
+            return response()->json(['message' => 'Invalid signature'], 403);
+        }
+
+        $transactions = Transaction::where('midtrans_order_id', $midtransOrderId)->get();
+        if ($transactions->isEmpty()) {
+            return response()->json(['message' => 'Transaction not found'], 404);
+        }
+
+        $transactionStatus = $notification['transaction_status'] ?? '';
+        $paymentType = $notification['payment_type'] ?? '';
+        $fraudStatus = $notification['fraud_status'] ?? '';
+
+        $status = 'Belum dibayar';
+        if ($transactionStatus === 'capture') {
+            if ($paymentType === 'credit_card') {
+                if ($fraudStatus === 'challenge') {
+                    $status = 'Belum dibayar';
+                } else {
+                    $status = 'Sedang Disewa';
+                }
+            }
+        } elseif ($transactionStatus === 'settlement') {
+            $status = 'Sedang Disewa';
+        } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+            $status = 'Batal';
+        }
+
+        foreach ($transactions as $t) {
+            $t->status = $status;
+            $t->save();
+        }
+
+        return response()->json(['message' => 'Notification processed successfully']);
+    }
+
+    private function getMidtransSnapToken($transaction, $overrideAmount = null, $codes = null)
+    {
+        if ($transaction->payment_token) {
+            return [
+                'token' => $transaction->payment_token,
+                'redirect_url' => 'https://app.sandbox.midtrans.com/snap/v4/redirection/' . $transaction->payment_token,
+                'order_id' => $transaction->midtrans_order_id ?? $transaction->code
+            ];
+        }
+
+        $serverKey = env('MIDTRANS_SERVER_KEY');
+        if (empty($serverKey)) {
+            return [
+                'token' => 'mock-token-' . md5($transaction->code),
+                'redirect_url' => null,
+                'order_id' => $transaction->code
+            ];
+        }
+
+        try {
+            $midtransOrderId = $transaction->code . '-' . time();
+            $amount = $overrideAmount ?? $transaction->total_price;
+            $codeQuery = $codes ? implode(',', $codes) : $transaction->code;
+
+            $payload = [
+                'transaction_details' => [
+                    'order_id' => $midtransOrderId,
+                    'gross_amount' => (int)$amount,
+                ],
+                'customer_details' => [
+                    'first_name' => $transaction->customer_name,
+                    'email' => $transaction->customer_email,
+                    'phone' => $transaction->customer_phone,
+                ],
+                'enabled_payments' => ['credit_card', 'gopay', 'shopeepay', 'bca_va', 'bni_va', 'bri_va', 'indomaret', 'alfamart'],
+                'callbacks' => [
+                    'finish' => route('booking.code', ['code' => $codeQuery]),
+                    'unfinish' => route('payment.method'),
+                    'error' => route('payment.method')
+                ]
+            ];
+
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ])
+            ->withBasicAuth($serverKey, '')
+            ->post('https://app.sandbox.midtrans.com/snap/v1/transactions', $payload);
+
+            if ($response->successful()) {
+                $token = $response->json()['token'] ?? null;
+                $redirectUrl = $response->json()['redirect_url'] ?? null;
+                if ($token) {
+                    return [
+                        'token' => $token,
+                        'redirect_url' => $redirectUrl,
+                        'order_id' => $midtransOrderId
+                    ];
+                }
+            }
+        } catch (\Exception $e) {
+        }
+
+        return [
+            'token' => 'mock-token-' . md5($transaction->code),
+            'redirect_url' => null,
+            'order_id' => $transaction->code
+        ];
     }
 }

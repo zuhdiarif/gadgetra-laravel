@@ -11,6 +11,8 @@ class Transaction extends Model
 
     protected $fillable = [
         'code',
+        'midtrans_order_id',
+        'payment_token',
         'user_id',
         'product_id',
         'customer_name',
@@ -47,6 +49,7 @@ class Transaction extends Model
     {
         $code = 'RNT' . strtoupper(substr(md5(time() . rand()), 0, 6));
         $product = Product::where('slug', $data['product_slug'])->first();
+        $status = env('MIDTRANS_SERVER_KEY') ? 'Belum dibayar' : 'Sedang Disewa';
 
         return self::create([
             'code'             => $code,
@@ -63,7 +66,7 @@ class Transaction extends Model
             'start_date' => $data['start_date'],
             'end_date' => $data['end_date'],
             'total_price' => (int)$data['total_price'],
-            'status' => 'Sedang Disewa',
+            'status' => $status,
             'remaining_time' => '24 : 00 : 00'
         ]);
     }
